@@ -16,12 +16,32 @@ class Auth extends react.Component{
     }
 
     login = (data) => {
-        // TODO: write codes to login
+        fetch(this.props.server_url, + '/api/auth/login', {
+            method: "POST",
+            mode: 'cors',
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                'Accept' : 'application/json'
+            },
+            body: JSON.stringify(data),
+        }).then((res) => {
+            res.json().then((data) => {
+                if (data.message === "Logged in"){
+                    this.props.changeScreen('lobby');
+                }
+                else{
+                    alert(data.message);
+                    // this.setState({screen: "auth"});
+                }
+            });
+        });
     }
 
     register = (data) => {
         // TODO: write codes to register
         console.log(data);
+        // look at week 7/8 video on how to register new account and add to mongodb database
     }
 
     render(){
