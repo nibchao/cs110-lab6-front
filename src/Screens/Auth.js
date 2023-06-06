@@ -31,7 +31,6 @@ class Auth extends react.Component {
           this.props.changeScreen("lobby");
         } else {
           alert(data.message);
-          // this.setState({screen: "auth"});
         }
       });
     });
@@ -89,16 +88,14 @@ class Auth extends react.Component {
               this.setState({ showForm: true, selectedForm: "login" })
             }
           >
-            {" "}
-            Login{" "}
+            Login
           </Button>
           <Button
             onClick={() =>
               this.setState({ showForm: true, selectedForm: "register" })
             }
           >
-            {" "}
-            Register{" "}
+            Register
           </Button>
         </div>
       );

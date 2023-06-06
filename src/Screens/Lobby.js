@@ -16,8 +16,8 @@ class Lobby extends react.Component {
     this.state = {
       username: "",
       rooms: undefined,
-      screen: '',
-      room: '',
+      screen: "",
+      room: "",
     };
   }
 
@@ -36,10 +36,10 @@ class Lobby extends react.Component {
   }
 
   roomSelect = (room, username) => {
-    this.socket.emit("join", {"room":room, "username":username});
-    this.setState({username:username, room:room, screen:"chatroom"})
+    this.socket.emit("join", { room: room, username: username });
+    this.setState({ username: username, room: room, screen: "chatroom" });
     this.props.changeScreen("chatroom");
-  }
+  };
 
   render() {
     return (
@@ -67,8 +67,7 @@ class Lobby extends react.Component {
               .then(() => window.location.reload());
           }}
         >
-          {" "}
-          Logout{" "}
+          Logout
         </Button>
         <h1>Lobby</h1>
         {this.state.rooms
@@ -77,8 +76,7 @@ class Lobby extends react.Component {
                 <Button
                   variant="contained"
                   key={"roomKey" + room}
-                  onClick={() => this.roomSelect(room, this.username)
-                  }
+                  onClick={() => this.roomSelect(room, this.username)}
                 >
                   {room}
                 </Button>
