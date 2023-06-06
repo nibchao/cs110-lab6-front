@@ -16,6 +16,8 @@ class Lobby extends react.Component {
     this.state = {
       username: "",
       rooms: undefined,
+      screen: '',
+      room: '',
     };
   }
 
@@ -31,6 +33,11 @@ class Lobby extends react.Component {
         this.setState({ rooms: data });
       });
     });
+  }
+
+  roomSelect = (room, username) => {
+    this.socket.emit("join", {"room":room, "username":username});
+    this.setState({username:username, room:room, screen:"chatroom"})
   }
 
   render() {
@@ -69,11 +76,7 @@ class Lobby extends react.Component {
                 <Button
                   variant="contained"
                   key={"roomKey" + room}
-                  onClick={() =>
-                    this.socket.emit("join", {
-                      room: room,
-                      username: this.username, // this.username is not correct but i don't know how to get the logged in user's username
-                    })
+                  onClick={() => this.roomSelect(room, this.username)
                   }
                 >
                   {room}
