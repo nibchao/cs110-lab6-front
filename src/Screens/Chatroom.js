@@ -1,5 +1,6 @@
 import react from "react";
 import { io } from 'socket.io-client'
+import { Button } from "@mui/material";
 
 class Chatroom extends react.Component{
     constructor(props){
@@ -12,7 +13,7 @@ class Chatroom extends react.Component{
         });
         this.state = {
             messages: [],
-            text: ''
+            text: '',
         }
     }
 
@@ -41,12 +42,28 @@ class Chatroom extends react.Component{
         });
     }
 
+    sendMessage = (text) =>
+    {
+        this.socket.emit("chat message", text);
+        this.state.messages.push(text);
+        this.setState({text: text});
+    }
+
+    back = () =>
+    {   
+        this.props.changeScreen("lobby");
+    }
+
     render(){
         return(
             <div>
-                {/* show chats */}
-                {/* show chat input box*/}
                 Chatroom
+                <ul>
+                    {this.state.messages.map((message) => <li>{message}</li>)}
+                </ul>
+                <input type="text" id="text" onChange={(e) => {this.state.text=e.target.value}}></input>
+                <Button onClick={() => this.sendMessage(this.state.text)}>Send</Button>
+                <Button onClick={() => this.back()}>Back</Button>
             </div>
         );
     }
