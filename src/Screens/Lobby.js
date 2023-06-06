@@ -1,5 +1,6 @@
 import react from "react";
 import { Button } from "@mui/material";
+import Auth from "./Auth";
 
 class Lobby extends react.Component {
   constructor(props) {
@@ -26,6 +27,20 @@ class Lobby extends react.Component {
   render() {
     return (
       <div>
+        <Button variant="contained" onClick={() => {
+          fetch(this.props.server_url + "/api/auth/logout", {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(() => {
+            return (
+            <div>
+              <Auth server_url={this.props.server_url} changeScreen="auth"/>
+            </div>)
+          }).then(() => window.location.reload())
+        }}> Logout </Button>
         <h1>Lobby</h1>
         {this.state.rooms
           ? this.state.rooms.map((room) => {
