@@ -1,9 +1,10 @@
-import react from "react";
+import React from "react";
 import { Button } from "@mui/material";
 import Auth from "./Auth";
 import { io } from "socket.io-client";
+import Chatroom from "./Chatroom";
 
-class Lobby extends react.Component {
+class Lobby extends React.Component {
   constructor(props) {
     super(props);
     this.socket = io("http://localhost:3001", {
@@ -17,7 +18,7 @@ class Lobby extends react.Component {
       username: "",
       rooms: undefined,
       screen: "",
-      room: "",
+      selectedRoom: null,
     };
   }
 
@@ -28,17 +29,23 @@ class Lobby extends react.Component {
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((res) => {
-      res.json().then((data) => {
+    })
+      .then((res) => res.json())
+      .then((data) => {
         this.setState({ rooms: data });
       });
-    });
   }
 
-  roomSelect = (room, username) => {
-    this.socket.emit("join", { room: room, username: username });
-    this.setState({ username: username, room: room, screen: "chatroom" });
-    this.props.changeScreen("chatroom");
+  handleRoomSelect = (room) => {
+    const { username } = this.state;
+    this.setState({ selectedRoom: room, screen: "chatroom" });
+    this.socket.emit("join", { room, username });
+  };
+
+  handleBackToLobby = () => {
+    const { selectedRoom, username } = this.state;
+    this.setState({ selectedRoom: null, screen: "", username: "" });
+    this.socket.emit("leave", { room: selectedRoom, username });
   };
 
   createRoom = (data) => {
@@ -65,6 +72,17 @@ class Lobby extends react.Component {
   };
 
   render() {
+    const { rooms, selectedRoom, screen } = this.state;
+
+    if (screen === "chatroom") {
+      return (
+        <Chatroom
+          roomID={selectedRoom}
+          changeScreen={this.handleBackToLobby}
+        />
+      );
+    }
+
     return (
       <div>
         <Button
@@ -110,21 +128,19 @@ class Lobby extends react.Component {
           ></input>
         </div>
         <h1>Lobby</h1>
-        {this.state.rooms
-          ? this.state.rooms.map((room) => {
-              return (
-                <Button
-                  variant="contained"
-                  key={"roomKey" + room}
-                  onClick={() => this.roomSelect(room, this.username)}
-                >
-                  {room}
-                </Button>
-              );
-            })
-          : "loading..."}
-        {/* write codes to join a new room using room id*/}
-        {/* write codes to enable user to create a new room*/}
+        {rooms ? (
+          rooms.map((room) => (
+            <Button
+              variant="contained"
+              key={"roomKey" + room}
+              onClick={() => this.handleRoomSelect(room)}
+            >
+              {room}
+            </Button>
+          ))
+        ) : (
+          <p>Loading...</p>
+        )}
       </div>
     );
   }
