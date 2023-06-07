@@ -41,6 +41,28 @@ class Lobby extends react.Component {
     this.props.changeScreen("chatroom");
   };
 
+  createRoom = (data) => {
+    document.getElementById("room-name").value = "";
+    fetch(this.props.server_url + "/api/rooms/create", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ roomName: data }),
+    }).then((res) => {
+      res.json().then((data) => {
+        if (data.status === false) {
+          console.log("failed to make room");
+        } else {
+          alert(`${this.state.room} room created`);
+          window.location.reload();
+        }
+      });
+    });
+  };
+
   render() {
     return (
       <div>
@@ -69,6 +91,23 @@ class Lobby extends react.Component {
         >
           Logout
         </Button>
+        <div>
+          <Button
+            variant="contained"
+            onClick={() => this.createRoom(this.state.room)}
+          >
+            Create Room
+          </Button>
+          <input
+            type="search"
+            id="room-name"
+            placeholder="Enter room name to create..."
+            style={{ width: "300px" }}
+            onChange={(e) => {
+              this.state.room = e.target.value;
+            }}
+          ></input>
+        </div>
         <h1>Lobby</h1>
         {this.state.rooms
           ? this.state.rooms.map((room) => {
