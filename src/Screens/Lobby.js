@@ -53,12 +53,13 @@ class Lobby extends react.Component {
       body: JSON.stringify({ roomName: data }),
     }).then((res) => {
       res.json().then((data) => {
-        if (data.status === false) {
-          console.log("failed to make room");
-        } else {
-          alert(`${this.state.room} room created`);
-          window.location.reload();
-        }
+        // if (data.status === false) {
+        //   console.log("failed to make room");
+        // } else {
+        //   alert(`${this.state.room} room created`);
+        //   window.location.reload();
+        // }
+        window.location.reload();
       });
     });
   };
