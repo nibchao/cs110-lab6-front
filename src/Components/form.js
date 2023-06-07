@@ -41,7 +41,7 @@ class Form extends react.Component{
                 <form onSubmit={this.handleSubmit}>
                     {this.state.fields.map((field, index) => {
                         return(
-                            <div>
+                            <div key={"auth"+field[1]}>
                                 <TextField 
                                     variant="standard" 
                                     key={"auth"+field[1]} 

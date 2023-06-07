@@ -61,13 +61,12 @@ class Chatroom extends React.Component {
 
   render() {
     const { messages } = this.state;
-
     return (
       <div>
         <h1>Chatroom</h1>
         <ul>
-          {messages.map((message, index) => (
-            <li key={index}>{message}</li>
+          {this.state.messages.map((message) => (
+            <li key={"messageKey" + message}>{message}</li>
           ))}
         </ul>
         <input
