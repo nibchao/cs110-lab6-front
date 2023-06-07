@@ -1,8 +1,8 @@
-import react from "react";
+import React from "react";
 import { io } from "socket.io-client";
 import { Button } from "@mui/material";
 
-class Chatroom extends react.Component {
+class Chatroom extends React.Component {
   constructor(props) {
     super(props);
     this.socket = io("http://localhost:3001", {
@@ -19,54 +19,68 @@ class Chatroom extends react.Component {
   }
 
   componentDidMount() {
-  // Establish a connection to the server
-  this.socket = io("http://localhost:3001", {
-    cors: {
-      origin: "http://localhost:3001",
-      credentials: true,
-    },
-    transports: ["websocket"],
-  });
+    const { roomID } = this.props;
+    this.socket.emit("join", { room: roomID });
 
-  // Set up event listener to receive chat messages
-  this.socket.on("chat message", (message) => {
-    // Update the state with the received message
+    this.socket.on("chat message", (message) => {
+      if (message.room === roomID) {
+        this.handleReceivedMessage(message);
+      }
+    });
+
+    // Fetch initial messages from the server if needed
+    // ...
+  }
+
+  componentWillUnmount() {
+    const { roomID } = this.props;
+    this.socket.emit("leave", { room: roomID });
+    this.socket.off("chat message");
+  }
+
+  handleReceivedMessage = (message) => {
     this.setState((prevState) => ({
-      messages: [...prevState.messages, message],
+      messages: [...prevState.messages, message.text],
     }));
-  });
-}
+  };
 
-sendMessage = (text) => {
-  this.socket.emit("chat message", text);
-  this.setState((prevState) => ({
-    messages: [...prevState.messages, text],
-    text: "",
-  }));
-};
+  sendMessage = () => {
+    const { text } = this.state;
+    const { roomID } = this.props;
+    this.socket.emit("chat message", { room: roomID, text });
+    this.setState({ text: "" });
+  };
 
-render() {
-  return (
-    <div>
-      Chatroom
-      <ul>
-        {this.state.messages.map((message, index) => (
-          <li key={index}>{message}</li>
-        ))}
-      </ul>
-      <input
-        type="text"
-        id="text"
-        value={this.state.text}
-        onChange={(e) => {
-          this.setState({ text: e.target.value });
-        }}
-      ></input>
-      <Button onClick={() => this.sendMessage(this.state.text)}>Send</Button>
-      <Button onClick={this.back}>Back</Button>
-    </div>
-  );
-}
+  handleTextChange = (e) => {
+    this.setState({ text: e.target.value });
+  };
+
+  back = () => {
+    this.props.changeScreen("lobby");
+  };
+
+  render() {
+    const { messages } = this.state;
+
+    return (
+      <div>
+        <h1>Chatroom</h1>
+        <ul>
+          {messages.map((message, index) => (
+            <li key={index}>{message}</li>
+          ))}
+        </ul>
+        <input
+          type="text"
+          id="text"
+          value={this.state.text}
+          onChange={this.handleTextChange}
+        />
+        <Button onClick={this.sendMessage}>Send</Button>
+        <Button onClick={this.back}>Back</Button>
+      </div>
+    );
+  }
 }
 
 export default Chatroom;
