@@ -19,60 +19,54 @@ class Chatroom extends react.Component {
   }
 
   componentDidMount() {
-    console.log(this.props.roomID);
+  // Establish a connection to the server
+  this.socket = io("http://localhost:3001", {
+    cors: {
+      origin: "http://localhost:3001",
+      credentials: true,
+    },
+    transports: ["websocket"],
+  });
 
-    let data = {};
-    data["roomID"] = this.props.roomID;
+  // Set up event listener to receive chat messages
+  this.socket.on("chat message", (message) => {
+    // Update the state with the received message
+    this.setState((prevState) => ({
+      messages: [...prevState.messages, message],
+    }));
+  });
+}
 
-    fetch(this.props.server_url + "/api/messages/all", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
-      res.json().then((data) => {
-        // probably supposed to do something, this was copied from screenhandler.js
-        //   if (data.message === "logged in") {
-        //     this.setState({ screen: "lobby" });
-        //   } else {
-        //     this.setState({ screen: "auth" });
-        //   }
-      });
-    });
-  }
+sendMessage = (text) => {
+  this.socket.emit("chat message", text);
+  this.setState((prevState) => ({
+    messages: [...prevState.messages, text],
+    text: "",
+  }));
+};
 
-  sendMessage = (text) => {
-    this.socket.emit("chat message", text);
-    this.state.messages.push(text);
-    this.setState({ text: text });
-  };
-
-  back = () => {
-    this.props.changeScreen("lobby");
-  };
-
-  render() {
-    return (
-      <div>
-        Chatroom
-        <ul>
-          {this.state.messages.map((message) => (
-            <li>{message}</li>
-          ))}
-        </ul>
-        <input
-          type="text"
-          id="text"
-          onChange={(e) => {
-            this.state.text = e.target.value;
-          }}
-        ></input>
-        <Button onClick={() => this.sendMessage(this.state.text)}>Send</Button>
-        <Button onClick={() => this.back()}>Back</Button>
-      </div>
-    );
-  }
+render() {
+  return (
+    <div>
+      Chatroom
+      <ul>
+        {this.state.messages.map((message, index) => (
+          <li key={index}>{message}</li>
+        ))}
+      </ul>
+      <input
+        type="text"
+        id="text"
+        value={this.state.text}
+        onChange={(e) => {
+          this.setState({ text: e.target.value });
+        }}
+      ></input>
+      <Button onClick={() => this.sendMessage(this.state.text)}>Send</Button>
+      <Button onClick={this.back}>Back</Button>
+    </div>
+  );
+}
 }
 
 export default Chatroom;
