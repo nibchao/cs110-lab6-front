@@ -99,6 +99,28 @@ class Lobby extends React.Component {
     }
   };
 
+  leaveRoom = (data) => {
+    if (document.getElementById("leave-room-name").value === "") {
+      console.log("input was empty, did not leave room");
+    } else {
+      document.getElementById("leave-room-name").value = "";
+      fetch(this.props.server_url + "/api/rooms/leave", {
+        method: "DELETE",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: this.state.username, roomName: data }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          this.setState({ room: data });
+          window.location.reload();
+        });
+    }
+  }
+
   render() {
     const { rooms, selectedRoom, screen } = this.state;
 
@@ -163,6 +185,18 @@ class Lobby extends React.Component {
             type="search"
             id="join-room-name"
             placeholder="Enter room name to join..."
+            style={{ width: "300px" }}
+            onChange={(e) => {
+              this.setState({ room: e.target.value });
+            }}
+          />
+        </div>
+        <div>
+          <Button variant="contained" onClick={() => this.leaveRoom(this.state.room)}>Leave Room</Button>
+          <input
+            type="search"
+            id="leave-room-name"
+            placeholder="Enter room name to leave..."
             style={{ width: "300px" }}
             onChange={(e) => {
               this.setState({ room: e.target.value });
