@@ -69,7 +69,7 @@ class Auth extends react.Component {
           />
         );
       } else if (this.state.selectedForm === "register") {
-        fields = ["username", "password", "name", "rooms"];
+        fields = ["username", "password", "name"];
         display = (
           <Form
             fields={fields}
