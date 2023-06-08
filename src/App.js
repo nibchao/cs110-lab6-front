@@ -58,7 +58,7 @@ let adjusting = 0;
 function App() {
   const [selectedScreen, setSelectedScreen] = React.useState(0);
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const [mode, setMode] = React.useState('light');
+  const [mode, setMode] = React.useState('dark');
 
   React.useEffect(() => {
     if (localStorage.getItem('mode') !== null)
