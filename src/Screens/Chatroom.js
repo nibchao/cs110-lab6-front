@@ -30,6 +30,38 @@ class Chatroom extends React.Component {
 
     // Fetch initial messages from the server if needed
     // ...
+    fetch(this.props.server_url + "/api/rooms/messages", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      res.json().then((data) => {
+        console.log('fetched data:', data)
+        // data.message 
+        // message: {
+        //   text: { type: String, required: true },
+        // },
+
+        // data.sender
+        // sender: {
+        //   type: mongoose.Schema.Types.ObjectId,
+        //   ref: "User",
+        //   required: true,
+        // },
+
+        // data.room
+        // room: {
+        //   type: mongoose.Schema.Types.ObjectId,
+        //   ref: "Room",
+        //   required: true,
+        // },
+
+        // this.setState({ messages: data });
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -60,7 +92,7 @@ class Chatroom extends React.Component {
   };
 
   render() {
-    const { messages } = this.state;
+    // const { messages } = this.state;
     return (
       <div>
         <h1>Chatroom</h1>

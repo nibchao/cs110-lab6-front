@@ -126,7 +126,7 @@ class Lobby extends React.Component {
 
     if (screen === "chatroom") {
       return (
-        <Chatroom roomID={selectedRoom} changeScreen={this.handleBackToLobby} />
+        <Chatroom roomID={selectedRoom} changeScreen={this.handleBackToLobby} server_url={this.props.server_url}/>
       );
     }
 
