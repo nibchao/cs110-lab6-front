@@ -38,8 +38,22 @@ class Lobby extends React.Component {
 
   handleRoomSelect = (room) => {
     const { username } = this.state;
+    fetch(this.props.server_url + "/api/rooms/join", {
+      method: "POST",
+      mode: 'cors',
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: this.state.username, roomName: room }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // this.setState({ room: data });
+      });
     this.setState({ selectedRoom: room, screen: "chatroom" });
     this.socket.emit("join", { room, username });
+    
   };
 
   handleBackToLobby = () => {
@@ -49,26 +63,35 @@ class Lobby extends React.Component {
   };
 
   createRoom = (data) => {
-    document.getElementById("room-name").value = "";
-    fetch(this.props.server_url + "/api/rooms/create", {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ roomName: data }),
-    }).then((res) => {
-      res.json().then((data) => {
-        // if (data.status === false) {
-        //   console.log("failed to make room");
-        // } else {
-        //   alert(`${this.state.room} room created`);
-        //   window.location.reload();
-        // }
-        window.location.reload();
+    console.log(data);
+    if (document.getElementById("room-name").value === "")
+    {
+      console.log('input was empty, not creating room')
+    }
+    else
+    {
+      document.getElementById("room-name").value = "";
+      fetch(this.props.server_url + "/api/rooms/create", {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roomName: data }),
+      }).then((res) => {
+        res.json().then((data) => {
+          // if (data.status === false) {
+          //   console.log("failed to make room");
+          // } else {
+          //   alert(`${this.state.room} room created`);
+          //   window.location.reload();
+          // }
+          // this.setState({  })
+          window.location.reload();
+        });
       });
-    });
+    }
   };
 
   render() {
@@ -113,7 +136,7 @@ class Lobby extends React.Component {
         <div>
           <Button
             variant="contained"
-            onClick={() => this.createRoom(this.state.room)}
+            onClick={() => this.createRoom(this.state.room)} // don't change "this.state.room" because it breaks otherwise, works as is for some reason
           >
             Create Room
           </Button>
@@ -123,7 +146,7 @@ class Lobby extends React.Component {
             placeholder="Enter room name to create..."
             style={{ width: "300px" }}
             onChange={(e) => {
-              this.state.room = e.target.value;
+              this.setState({ room: e.target.value});
             }}
           ></input>
         </div>
