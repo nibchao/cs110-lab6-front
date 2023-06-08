@@ -38,22 +38,8 @@ class Lobby extends React.Component {
 
   handleRoomSelect = (room) => {
     const { username } = this.state;
-    fetch(this.props.server_url + "/api/rooms/join", {
-      method: "POST",
-      mode: 'cors',
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: this.state.username, roomName: room }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // this.setState({ room: data });
-      });
     this.setState({ selectedRoom: room, screen: "chatroom" });
     this.socket.emit("join", { room, username });
-    
   };
 
   handleBackToLobby = () => {
@@ -64,12 +50,9 @@ class Lobby extends React.Component {
 
   createRoom = (data) => {
     console.log(data);
-    if (document.getElementById("room-name").value === "")
-    {
-      console.log('input was empty, not creating room')
-    }
-    else
-    {
+    if (document.getElementById("room-name").value === "") {
+      console.log("input was empty, not creating room");
+    } else {
       document.getElementById("room-name").value = "";
       fetch(this.props.server_url + "/api/rooms/create", {
         method: "POST",
@@ -94,15 +77,34 @@ class Lobby extends React.Component {
     }
   };
 
+  joinRoom = (data) => {
+    if (document.getElementById("join-room-name").value === "") {
+      console.log("input was empty, not joining room");
+    } else {
+      document.getElementById("join-room-name").value = "";
+      fetch(this.props.server_url + "/api/rooms/join", {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: this.state.username, roomName: data }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          this.setState({ room: data });
+          window.location.reload();
+        });
+    }
+  };
+
   render() {
     const { rooms, selectedRoom, screen } = this.state;
 
     if (screen === "chatroom") {
       return (
-        <Chatroom
-          roomID={selectedRoom}
-          changeScreen={this.handleBackToLobby}
-        />
+        <Chatroom roomID={selectedRoom} changeScreen={this.handleBackToLobby} />
       );
     }
 
@@ -146,9 +148,26 @@ class Lobby extends React.Component {
             placeholder="Enter room name to create..."
             style={{ width: "300px" }}
             onChange={(e) => {
-              this.setState({ room: e.target.value});
+              this.setState({ room: e.target.value });
             }}
           ></input>
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            onClick={() => this.joinRoom(this.state.room)}
+          >
+            Join Room
+          </Button>
+          <input
+            type="search"
+            id="join-room-name"
+            placeholder="Enter room name to join..."
+            style={{ width: "300px" }}
+            onChange={(e) => {
+              this.setState({ room: e.target.value });
+            }}
+          />
         </div>
         <h1>Lobby</h1>
         {rooms ? (
