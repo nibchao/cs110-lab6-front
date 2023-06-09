@@ -39,7 +39,7 @@ class Chatroom extends React.Component {
       },
     }).then((res) => {
       res.json().then((data) => {
-        console.log('fetched data:', data)
+        //console.log('fetched data:', data)
         // data.message 
         // message: {
         //   text: { type: String, required: true },
@@ -59,7 +59,7 @@ class Chatroom extends React.Component {
         //   required: true,
         // },
 
-        // this.setState({ messages: data });
+        this.setState({ messages: data });
       });
     });
   }
@@ -79,7 +79,7 @@ class Chatroom extends React.Component {
   sendMessage = () => {
     const { text } = this.state;
     const { roomID } = this.props;
-    this.socket.emit("chat message", { room: roomID, text });
+    this.socket.emit("chat message", { room: roomID, text, username: this.props.username });
     this.setState({ text: "" });
   };
 
