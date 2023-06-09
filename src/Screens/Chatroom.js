@@ -58,9 +58,12 @@ class Chatroom extends React.Component {
         //   ref: "Room",
         //   required: true,
         // },
-        console.log("fetch data:", data);
+        const messageArray = [];
+        for (let cnt = 0; cnt < data.length; cnt++) {
+          messageArray.push(data[cnt].message.text);
+        }
 
-        this.setState({ messages: data.message }); // Cannot read properties of undefined (reading 'map') ### something is wrong/done incorrectly here
+        this.setState({ messages: messageArray });
       });
     });
   }
