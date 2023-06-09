@@ -40,7 +40,7 @@ class Chatroom extends React.Component {
     }).then((res) => {
       res.json().then((data) => {
         //console.log('fetched data:', data)
-        // data.message 
+        // data.message
         // message: {
         //   text: { type: String, required: true },
         // },
@@ -58,8 +58,9 @@ class Chatroom extends React.Component {
         //   ref: "Room",
         //   required: true,
         // },
+        console.log("fetch data:", data);
 
-        this.setState({ messages: data });
+        this.setState({ messages: data.message }); // Cannot read properties of undefined (reading 'map') ### something is wrong/done incorrectly here
       });
     });
   }
@@ -79,7 +80,7 @@ class Chatroom extends React.Component {
   sendMessage = () => {
     const { text } = this.state;
     const { roomID } = this.props;
-    this.socket.emit("chat message", { room: roomID, text, username: this.props.username });
+    this.socket.emit("chat message", { room: roomID, text });
     this.setState({ text: "" });
   };
 
