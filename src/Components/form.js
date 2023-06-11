@@ -27,6 +27,7 @@ class Form extends react.Component{
         for (let i = 0; i < fields.length; i++) {
             data[fields[i][1]] = fields[i][0];
         }
+        data["generatedOTPToken"] = this.props.generatedOTP;
         this.props.submit(data);
     }
 
