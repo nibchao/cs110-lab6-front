@@ -41,17 +41,36 @@ class Form extends react.Component{
 
                 <form onSubmit={this.handleSubmit}>
                     {this.state.fields.map((field, index) => {
-                        return(
-                            <div key={"auth"+field[1]}>
-                                <TextField 
-                                    variant="standard" 
-                                    key={"auth"+field[1]} 
-                                    label={field[1]} 
-                                    onChange={(event) => this.handleChange(event, index)}
-                                    id={field[1]}
-                                />
-                            </div>
-                        );
+                        if (field[1] === "password")
+                        {
+                            return(
+                                <div key={"auth"+field[1]}>
+                                    <TextField 
+                                        variant="standard" 
+                                        key={"auth"+field[1]} 
+                                        label={field[1]} 
+                                        onChange={(event) => this.handleChange(event, index)}
+                                        id={field[1]}
+                                        type={"password"}
+                                    />
+                                </div>
+                            );
+                        }
+                        else
+                        {
+                            return(
+                                <div key={"auth"+field[1]}>
+                                    <TextField 
+                                        variant="standard" 
+                                        key={"auth"+field[1]} 
+                                        label={field[1]} 
+                                        onChange={(event) => this.handleChange(event, index)}
+                                        id={field[1]}
+                                    />
+                                </div>
+                            );
+                        }
+                        
                     })}
                     <input type="submit"></input>
                 </form>

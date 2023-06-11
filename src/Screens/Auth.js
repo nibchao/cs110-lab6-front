@@ -58,7 +58,7 @@ class Auth extends react.Component {
 
   otpToken = () => {
     alert(
-      "The URL with your generated OTP token will arrive in the browser console shortly."
+      "The generated OTP token to login will arrive in your email shortly."
     );
     fetch(this.props.server_url + "/api/auth/otptoken", {
       method: "POST",
@@ -71,7 +71,6 @@ class Auth extends react.Component {
       body: JSON.stringify({ email: document.getElementById('email').value }),
     }).then((res) => {
       res.json().then((data) => {
-        console.log("Generated OTP Token URL:", data.messageURL);
         this.setState({ generatedOTPToken: data.generatedOTP });
       });
     });
@@ -82,27 +81,27 @@ class Auth extends react.Component {
     if (this.state.showForm) {
       let fields = [];
       if (this.state.selectedForm === "login") {
-        fields = ["email", "password", "otpToken"];
+        fields = ["email", "username", "password", "otpToken"];
         display = (
           <div>
             <Form
               fields={fields}
               close={this.closeForm}
-              type="login"
+              type="Login Form"
               submit={this.login}
               key={this.state.selectedForm}
               generatedOTP={this.state.generatedOTPToken}
             />
-            <button onClick={this.otpToken}>Generate OTP Token</button>
+            <button onClick={this.otpToken}>Generate OTP Token to Login</button>
           </div>
         );
       } else if (this.state.selectedForm === "register") {
-        fields = ["username", "password", "email"];
+        fields = ["email", "username", "password"];
         display = (
           <Form
             fields={fields}
             close={this.closeForm}
-            type="register"
+            type="Register Form"
             submit={this.register}
             key={this.state.selectedForm}
           />
