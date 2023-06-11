@@ -119,14 +119,19 @@ class Lobby extends React.Component {
           window.location.reload();
         });
     }
-  }
+  };
 
   render() {
     const { rooms, selectedRoom, screen } = this.state;
 
     if (screen === "chatroom") {
       return (
-        <Chatroom roomID={selectedRoom} changeScreen={this.handleBackToLobby} server_url={this.props.server_url} username={this.state.username}/>
+        <Chatroom
+          roomID={selectedRoom}
+          changeScreen={this.handleBackToLobby}
+          server_url={this.props.server_url}
+          username={this.state.username}
+        />
       );
     }
 
@@ -192,7 +197,12 @@ class Lobby extends React.Component {
           />
         </div>
         <div>
-          <Button variant="contained" onClick={() => this.leaveRoom(this.state.room)}>Leave Room</Button>
+          <Button
+            variant="contained"
+            onClick={() => this.leaveRoom(this.state.room)}
+          >
+            Leave Room
+          </Button>
           <input
             type="search"
             id="leave-room-name"

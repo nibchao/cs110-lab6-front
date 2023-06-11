@@ -48,7 +48,9 @@ class Auth extends react.Component {
       body: JSON.stringify(data),
     }).then((res) => {
       res.json().then(() => {
+        alert("Account created");
         this.props.changeScreen("auth");
+        window.location.reload();
       });
     });
   };
@@ -69,7 +71,7 @@ class Auth extends react.Component {
           />
         );
       } else if (this.state.selectedForm === "register") {
-        fields = ["username", "password", "name"];
+        fields = ["username", "password", "email"];
         display = (
           <Form
             fields={fields}
