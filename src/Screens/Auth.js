@@ -61,13 +61,14 @@ class Auth extends react.Component {
       "The URL with your generated OTP token will arrive in the browser console shortly."
     );
     fetch(this.props.server_url + "/api/auth/otptoken", {
-      method: "GET",
+      method: "POST",
       mode: "cors",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
+      body: JSON.stringify({ email: document.getElementById('email').value }),
     }).then((res) => {
       res.json().then((data) => {
         console.log("Generated OTP Token URL:", data.messageURL);
@@ -81,7 +82,7 @@ class Auth extends react.Component {
     if (this.state.showForm) {
       let fields = [];
       if (this.state.selectedForm === "login") {
-        fields = ["username", "password", "otpToken"];
+        fields = ["email", "password", "otpToken"];
         display = (
           <div>
             <Form

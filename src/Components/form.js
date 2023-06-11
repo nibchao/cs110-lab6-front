@@ -48,6 +48,7 @@ class Form extends react.Component{
                                     key={"auth"+field[1]} 
                                     label={field[1]} 
                                     onChange={(event) => this.handleChange(event, index)}
+                                    id={field[1]}
                                 />
                             </div>
                         );
