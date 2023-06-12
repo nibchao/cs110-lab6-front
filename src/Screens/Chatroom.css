@@ -31,10 +31,10 @@ h1{
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6b95f5; 
+  background: #636363; 
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4264b3; 
+  background: #353535; 
 }
