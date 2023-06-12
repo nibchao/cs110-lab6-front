@@ -1,6 +1,6 @@
 import React from "react";
 import { io } from "socket.io-client";
-import { Button } from "@mui/material";
+import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 class Chatroom extends React.Component {
   constructor(props) {
@@ -97,7 +97,7 @@ class Chatroom extends React.Component {
         <h1>Chatroom</h1>
         <ul>
           {messages.map((message, index) => (
-            <li key={"messageKey" + index}>
+            <li key={"messageKey" + index} style={{paddingBottom: 20}}>
               {message}
               <ReactionButton
                 messageId={index}
@@ -131,10 +131,12 @@ const ReactionButton = ({ messageId, reactions, addReaction }) => {
         <span key={`reactionKey${index}`}>{reaction}</span>
       ))}
       <div>
-        <Button onClick={() => handleAddReaction("👍")}>👍</Button>
-        <Button onClick={() => handleAddReaction("👎")}>👎</Button>
-        <Button onClick={() => handleAddReaction("❤️")}>❤️</Button>
-        <Button onClick={() => handleAddReaction("😂")}>😂</Button>
+        <ToggleButtonGroup>
+          <ToggleButton onClick={() => handleAddReaction("👍")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👍</ToggleButton>
+          <ToggleButton onClick={() => handleAddReaction("👎")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👎</ToggleButton>
+          <ToggleButton onClick={() => handleAddReaction("❤️")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>❤️</ToggleButton>
+          <ToggleButton onClick={() => handleAddReaction("😂")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>😂</ToggleButton>
+        </ToggleButtonGroup>
       </div>
     </div>
   );
