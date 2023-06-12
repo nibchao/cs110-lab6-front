@@ -22,33 +22,37 @@ class Chatroom extends React.Component {
   componentDidMount() {
     const { roomID } = this.props;
     this.socket.emit("join", { room: roomID });
-
+  
     this.socket.on("chat message", (message) => {
       if (message.room === roomID) {
         this.handleReceivedMessage(message);
       }
     });
 
-    // Fetch initial messages from the server if needed
-    // ...
-
-    // Fetch initial reactions from the server if needed
-    // ...
-
-    // Example code to set initial reactions
-    // const initialReactions = {}; // Replace with actual initial reactions data
-    // this.setState({ reactions: initialReactions });
-  }
+fetch(this.props.server_url + "/api/rooms/messages", {
+    method: "POST",
+    mode: "cors",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ roomName: roomID }),
+  }).then((res) => {
+    res.json().then((data) => {
+      const messageArray = data.map((item) => ({ id: item.id, text: item.message.text }));
+      this.setState({ messages: messageArray });
+    });
+  });
+}
 
   componentWillUnmount() {
     const { roomID } = this.props;
     this.socket.emit("leave", { room: roomID });
     this.socket.off("chat message");
   }
-
   handleReceivedMessage = (message) => {
     this.setState((prevState) => ({
-      messages: [...prevState.messages, message],
+      messages: [...prevState.messages, { id: message.id, text: message.text }],
       reactions: { ...prevState.reactions, [message.id]: [] },
     }));
   };
@@ -97,16 +101,16 @@ class Chatroom extends React.Component {
                     <span key={`reactionKey${index}`}>{reaction}</span>
                   ))}
               </div>
-              <Button onClick={() => this.addReaction(message.id, "like")}>
+              <Button onClick={() => this.addReaction(message.id, "👍")}>
                👍
               </Button>
-              <Button onClick={() => this.addReaction(message.id, "dislike")}>
+              <Button onClick={() => this.addReaction(message.id, "👎")}>
                👎
               </Button>
-              <Button onClick={() => this.addReaction(message.id, "heart")}>
+              <Button onClick={() => this.addReaction(message.id, "❤️")}>
               ❤️
               </Button>
-              <Button onClick={() => this.addReaction(message.id, "laugh")}>
+              <Button onClick={() => this.addReaction(message.id, "😂")}>
               😂
               </Button>
             </li>
