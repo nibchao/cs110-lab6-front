@@ -14,6 +14,8 @@ class Chatroom extends React.Component {
     });
     this.state = {
       messages: [],
+      messageSender: [],
+      timestampSender: [],
       text: "",
     };
   }
@@ -39,11 +41,24 @@ class Chatroom extends React.Component {
     }).then((res) => {
       res.json().then((data) => {
         const messageArray = [];
+        const senderArray = [];
+        const createdTimestampArray = [];
         for (let cnt = 0; cnt < data.length; cnt++) {
           messageArray.push(data[cnt].message.text);
+          senderArray.push(data[cnt].sender);
+          let UTCTimestamp = data[cnt].createdAt;
+          let localTimestamp = new Date(UTCTimestamp);
+          let shortenedTimestamp = localTimestamp
+            .toString()
+            .replace(/GMT.*/g, "");
+          createdTimestampArray.push(shortenedTimestamp);
         }
 
-        this.setState({ messages: messageArray });
+        this.setState({
+          messages: messageArray,
+          messageSender: senderArray,
+          timestampSender: createdTimestampArray,
+        });
       });
     });
   }
@@ -80,8 +95,11 @@ class Chatroom extends React.Component {
       <div>
         <h1>Chatroom</h1>
         <ul>
-          {this.state.messages.map((message) => (
-            <li key={"messageKey" + message}>{message}</li>
+          {this.state.messages.map((message, sender) => (
+            <div key={"messageKey" + sender} style={{ paddingBottom: "10px" }}>
+              <div style={{ fontWeight: "bold"}}>{this.state.timestampSender[sender]}{" "}</div>
+              {this.state.messageSender[sender]}: {message}
+            </div>
           ))}
         </ul>
         <input
