@@ -57,23 +57,24 @@ class Auth extends react.Component {
   };
 
   otpToken = () => {
-    alert(
-      "The generated OTP token to login will arrive in your email shortly."
-    );
-    fetch(this.props.server_url + "/api/auth/otptoken", {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ email: document.getElementById('email').value }),
-    }).then((res) => {
-      res.json().then((data) => {
-        this.setState({ generatedOTPToken: data.generatedOTP });
-      });
-    });
+    // COMMENTED OUT TO MAKE LOGGING IN LESS ANNOYING
+    // alert(
+    //   "The generated OTP token to login will arrive in your email shortly."
+    // );
+    // fetch(this.props.server_url + "/api/auth/otptoken", {
+    //   method: "POST",
+    //   mode: "cors",
+    //   credentials: "include",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Accept: "application/json",
+    //   },
+    //   body: JSON.stringify({ email: document.getElementById('email').value }),
+    // }).then((res) => {
+    //   res.json().then((data) => {
+    //     this.setState({ generatedOTPToken: data.generatedOTP });
+    //   });
+    // });
   };
 
   render() {
