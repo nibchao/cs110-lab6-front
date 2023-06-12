@@ -69,15 +69,23 @@ class Chatroom extends React.Component {
     }));
   };
 
-  addReaction = (messageId, reaction, messageText, messageSenderID) => {
-    this.socket.emit("reaction", { messageText: messageText, messageSenderID: messageSenderID, reaction: reaction, roomName: this.props.roomID });
+  addReaction = (messageId, reaction, messageText, messageSender, isAdding) => {
+    this.socket.emit("reaction", {
+      messageText: messageText,
+      messageSenderID: messageSender,
+      reaction: reaction,
+      roomName: this.props.roomID,
+      isAdding: isAdding, // Pass the isAdding parameter to the server
+    });
     this.setState((prevState) => {
       const { reactions } = prevState;
       const updatedReactions = {
         ...reactions,
-        [messageId]: [...(reactions[messageId] || []), reaction],
+        [messageId]: isAdding
+          ? [...(reactions[messageId] || []), reaction]
+          : (reactions[messageId] || []).filter((r) => r !== reaction),
       };
-
+  
       return { reactions: updatedReactions };
     });
   };
@@ -132,31 +140,24 @@ class Chatroom extends React.Component {
 }
 
 const ReactionButton = ({ messageId, reactions, addReaction, messageText, messageSender }) => {
-  const [isClickedUp, setClickedUp] = useState(false);
-  const [isClickedDown, setClickedDown] = useState(false);
-  const [isClickedHeart, setClickedHeart] = useState(false);
-  const [isClickedJoy, setClickedJoy] = useState(false);
+  const [clickedReactions, setClickedReactions] = useState([]);
 
   const handleAddReaction = (reaction) => {
-    if (reaction === '👍' && !isClickedUp)
-    {
-      setClickedUp(true)
-      addReaction(messageId, reaction, messageText, messageSender);
-    }
-    else if (reaction === '👎' && !isClickedDown)
-    {
-      setClickedDown(true)
-      addReaction(messageId, reaction, messageText, messageSender);
-    }
-    else if (reaction === '❤️' && !isClickedHeart)
-    {
-      setClickedHeart(true)
-      addReaction(messageId, reaction, messageText, messageSender);
-    }
-    else if (reaction === '😂' && !isClickedJoy)
-    {
-      setClickedJoy(true)
-      addReaction(messageId, reaction, messageText, messageSender);
+    if (clickedReactions.includes(reaction)) {
+      // If the reaction is already clicked, remove it from the clickedReactions state
+      setClickedReactions((prevClickedReactions) =>
+        prevClickedReactions.filter((r) => r !== reaction)
+      );
+      // Remove the reaction from the message's reactions list
+      addReaction(messageId, reaction, messageText, messageSender, false);
+    } else {
+      // If the reaction is not clicked, add it to the clickedReactions state
+      setClickedReactions((prevClickedReactions) => [
+        ...prevClickedReactions,
+        reaction,
+      ]);
+      // Add the reaction to the message's reactions list
+      addReaction(messageId, reaction, messageText, messageSender, true);
     }
   };
 
@@ -167,10 +168,50 @@ const ReactionButton = ({ messageId, reactions, addReaction, messageText, messag
       ))}
       <div>
         <ToggleButtonGroup size="small">
-          <ToggleButton disabled={isClickedUp} value="thumbsup" onClick={() => handleAddReaction("👍")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👍</ToggleButton>
-          <ToggleButton disabled={isClickedDown} value="thumbsdown" onClick={() => handleAddReaction("👎")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👎</ToggleButton>
-          <ToggleButton disabled={isClickedHeart} value="heart" onClick={() => handleAddReaction("❤️")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>❤️</ToggleButton>
-          <ToggleButton disabled={isClickedJoy} value="joy" onClick={() => handleAddReaction("😂")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>😂</ToggleButton>
+          <ToggleButton
+            selected={clickedReactions.includes("👍")}
+            value="thumbsup"
+            onClick={() => handleAddReaction("👍")}
+            sx={{
+              ":hover": { bgcolor: "#AF5", color: "white" },
+              borderRadius: "30px",
+            }}
+          >
+            👍
+          </ToggleButton>
+          <ToggleButton
+            selected={clickedReactions.includes("👎")}
+            value="thumbsdown"
+            onClick={() => handleAddReaction("👎")}
+            sx={{
+              ":hover": { bgcolor: "#AF5", color: "white" },
+              borderRadius: "30px",
+            }}
+          >
+            👎
+          </ToggleButton>
+          <ToggleButton
+            selected={clickedReactions.includes("❤️")}
+            value="heart"
+            onClick={() => handleAddReaction("❤️")}
+            sx={{
+              ":hover": { bgcolor: "#AF5", color: "white" },
+              borderRadius: "30px",
+            }}
+          >
+            ❤️
+          </ToggleButton>
+          <ToggleButton
+            selected={clickedReactions.includes("😂")}
+            value="joy"
+            onClick={() => handleAddReaction("😂")}
+            sx={{
+              ":hover": { bgcolor: "#AF5", color: "white" },
+              borderRadius: "30px",
+            }}
+          >
+            😂
+          </ToggleButton>
         </ToggleButtonGroup>
       </div>
     </div>
