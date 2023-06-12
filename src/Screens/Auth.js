@@ -8,6 +8,7 @@ class Auth extends react.Component {
     this.state = {
       showForm: false,
       selectedForm: undefined,
+      generatedOTPToken: Date.now(),
     };
   }
 
@@ -48,7 +49,29 @@ class Auth extends react.Component {
       body: JSON.stringify(data),
     }).then((res) => {
       res.json().then(() => {
+        alert("Account created");
         this.props.changeScreen("auth");
+        window.location.reload();
+      });
+    });
+  };
+
+  otpToken = () => {
+    alert(
+      "The generated OTP token to login will arrive in your email shortly."
+    );
+    fetch(this.props.server_url + "/api/auth/otptoken", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ email: document.getElementById('email').value }),
+    }).then((res) => {
+      res.json().then((data) => {
+        this.setState({ generatedOTPToken: data.generatedOTP });
       });
     });
   };
@@ -58,23 +81,27 @@ class Auth extends react.Component {
     if (this.state.showForm) {
       let fields = [];
       if (this.state.selectedForm === "login") {
-        fields = ["username", "password"];
+        fields = ["email", "username", "password", "otpToken"];
         display = (
-          <Form
-            fields={fields}
-            close={this.closeForm}
-            type="login"
-            submit={this.login}
-            key={this.state.selectedForm}
-          />
+          <div>
+            <Form
+              fields={fields}
+              close={this.closeForm}
+              type="Login Form"
+              submit={this.login}
+              key={this.state.selectedForm}
+              generatedOTP={this.state.generatedOTPToken}
+            />
+            <button onClick={this.otpToken}>Generate OTP Token to Login</button>
+          </div>
         );
       } else if (this.state.selectedForm === "register") {
-        fields = ["username", "password", "name"];
+        fields = ["email", "username", "password"];
         display = (
           <Form
             fields={fields}
             close={this.closeForm}
-            type="register"
+            type="Register Form"
             submit={this.register}
             key={this.state.selectedForm}
           />
