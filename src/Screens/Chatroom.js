@@ -1,7 +1,7 @@
 import React from "react";
 import { io } from "socket.io-client";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { useState } from 'react'
+import { useState } from "react";
 
 class Chatroom extends React.Component {
   constructor(props) {
@@ -32,31 +32,14 @@ class Chatroom extends React.Component {
       }
     });
 
-    this.socket.on('reaction', () => {
-      fetch(this.props.server_url + "/api/rooms/messages", {
-        method: "POST",
-        mode: "cors",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ roomName: this.props.roomID }),
-      }).then((res) => {
-        res.json().then((data) => {
-          const messageArray = [];
-          const senderArray = [];
-          const reactionArray = [];
-          for (let cnt = 0; cnt < data.length; cnt++) {
-            messageArray.push(data[cnt].message.text);
-            reactionArray.push(data[cnt].reactions);
-            senderArray.push(data[cnt].sender);
-          }
-  
-          this.setState({ messages: messageArray,  messageSender: senderArray, reactionMessages: reactionArray });
-        });
-      });
-    })
+    this.socket.on("reaction", () => {
+      this.fetchMessageHistory();
+    });
 
+    this.fetchMessageHistory();
+  }
+
+  fetchMessageHistory = () => {
     fetch(this.props.server_url + "/api/rooms/messages", {
       method: "POST",
       mode: "cors",
@@ -76,10 +59,14 @@ class Chatroom extends React.Component {
           senderArray.push(data[cnt].sender);
         }
 
-        this.setState({ messages: messageArray,  messageSender: senderArray, reactionMessages: reactionArray });
+        this.setState({
+          messages: messageArray,
+          messageSender: senderArray,
+          reactionMessages: reactionArray,
+        });
       });
     });
-  }
+  };
 
   componentWillUnmount() {
     const { roomID } = this.props;
@@ -92,29 +79,7 @@ class Chatroom extends React.Component {
       messages: [...prevState.messages, message.text],
       reactions: { ...prevState.reactions, [message.id]: [] },
     }));
-    await new Promise(r => setTimeout(r, 1));
-    fetch(this.props.server_url + "/api/rooms/messages", {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ roomName: this.props.roomID }),
-    }).then((res) => {
-      res.json().then((data) => {
-        const messageArray = [];
-        const senderArray = [];
-        const reactionArray = [];
-        for (let cnt = 0; cnt < data.length; cnt++) {
-          messageArray.push(data[cnt].message.text);
-          reactionArray.push(data[cnt].reactions);
-          senderArray.push(data[cnt].sender);
-        }
-
-        this.setState({ messages: messageArray,  messageSender: senderArray, reactionMessages: reactionArray });
-      });
-    });
+    this.fetchMessageHistory();
   };
 
   addReaction = (messageId, reaction, messageText, messageSender, isAdding) => {
@@ -133,7 +98,7 @@ class Chatroom extends React.Component {
           ? [...(reactions[messageId] || []), reaction]
           : (reactions[messageId] || []).filter((r) => r !== reaction),
       };
-  
+
       return { reactions: updatedReactions };
     });
   };
@@ -161,9 +126,13 @@ class Chatroom extends React.Component {
         <h1>Chatroom</h1>
         <ul>
           {messages.map((message, index) => (
-            <li key={"messageKey" + index} style={{paddingBottom: 20}}>
+            <li key={"messageKey" + index} style={{ paddingBottom: 20 }}>
               {message}{" "}
-              {": [ Reactions: " + (this.state.reactionMessages[index] ? this.state.reactionMessages[index] : '' ) + " ]"}
+              <div>{"[ Reactions: " +
+                (this.state.reactionMessages[index]
+                  ? this.state.reactionMessages[index]
+                  : "") +
+                " ]"}</div>
               <ReactionButton
                 messageId={index}
                 reactions={reactions[index] || []}
@@ -187,7 +156,13 @@ class Chatroom extends React.Component {
   }
 }
 
-const ReactionButton = ({ messageId, reactions, addReaction, messageText, messageSender }) => {
+const ReactionButton = ({
+  messageId,
+  reactions,
+  addReaction,
+  messageText,
+  messageSender,
+}) => {
   const [clickedReactions, setClickedReactions] = useState([]);
 
   const handleAddReaction = (reaction) => {
