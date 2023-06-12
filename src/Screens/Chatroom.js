@@ -22,52 +22,56 @@ class Chatroom extends React.Component {
   componentDidMount() {
     const { roomID } = this.props;
     this.socket.emit("join", { room: roomID });
-  
+
     this.socket.on("chat message", (message) => {
       if (message.room === roomID) {
         this.handleReceivedMessage(message);
       }
     });
 
-fetch(this.props.server_url + "/api/rooms/messages", {
-    method: "POST",
-    mode: "cors",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ roomName: roomID }),
-  }).then((res) => {
-    res.json().then((data) => {
-      const messageArray = data.map((item) => ({ id: item.id, text: item.message.text }));
-      this.setState({ messages: messageArray });
+    fetch(this.props.server_url + "/api/rooms/messages", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ roomName: roomID }),
+    }).then((res) => {
+      res.json().then((data) => {
+        const messageArray = [];
+        for (let cnt = 0; cnt < data.length; cnt++) {
+          messageArray.push(data[cnt].message.text);
+        }
+
+        this.setState({ messages: messageArray });
+      });
     });
-  });
-}
+  }
 
   componentWillUnmount() {
     const { roomID } = this.props;
     this.socket.emit("leave", { room: roomID });
     this.socket.off("chat message");
   }
+
   handleReceivedMessage = (message) => {
     this.setState((prevState) => ({
-      messages: [...prevState.messages, { id: message.id, text: message.text }],
+      messages: [...prevState.messages, message.text],
       reactions: { ...prevState.reactions, [message.id]: [] },
     }));
   };
 
   addReaction = (messageId, reaction) => {
-    const { reactions } = this.state;
-    const updatedReactions = { ...reactions };
+    this.setState((prevState) => {
+      const { reactions } = prevState;
+      const updatedReactions = {
+        ...reactions,
+        [messageId]: [...(reactions[messageId] || []), reaction],
+      };
 
-    if (!updatedReactions[messageId]) {
-      updatedReactions[messageId] = [];
-    }
-
-    updatedReactions[messageId].push(reaction);
-
-    this.setState({ reactions: updatedReactions });
+      return { reactions: updatedReactions };
+    });
   };
 
   sendMessage = () => {
@@ -92,27 +96,14 @@ fetch(this.props.server_url + "/api/rooms/messages", {
       <div>
         <h1>Chatroom</h1>
         <ul>
-          {messages.map((message) => (
-            <li key={message.id}>
-              {message.text}
-              <div>
-                {reactions[message.id] &&
-                  reactions[message.id].map((reaction, index) => (
-                    <span key={`reactionKey${index}`}>{reaction}</span>
-                  ))}
-              </div>
-              <Button onClick={() => this.addReaction(message.id, "👍")}>
-               👍
-              </Button>
-              <Button onClick={() => this.addReaction(message.id, "👎")}>
-               👎
-              </Button>
-              <Button onClick={() => this.addReaction(message.id, "❤️")}>
-              ❤️
-              </Button>
-              <Button onClick={() => this.addReaction(message.id, "😂")}>
-              😂
-              </Button>
+          {messages.map((message, index) => (
+            <li key={"messageKey" + index}>
+              {message}
+              <ReactionButton
+                messageId={index}
+                reactions={reactions[index] || []}
+                addReaction={this.addReaction}
+              />
             </li>
           ))}
         </ul>
@@ -128,5 +119,25 @@ fetch(this.props.server_url + "/api/rooms/messages", {
     );
   }
 }
+
+const ReactionButton = ({ messageId, reactions, addReaction }) => {
+  const handleAddReaction = (reaction) => {
+    addReaction(messageId, reaction);
+  };
+
+  return (
+    <div>
+      {reactions.map((reaction, index) => (
+        <span key={`reactionKey${index}`}>{reaction}</span>
+      ))}
+      <div>
+        <Button onClick={() => handleAddReaction("👍")}>👍</Button>
+        <Button onClick={() => handleAddReaction("👎")}>👎</Button>
+        <Button onClick={() => handleAddReaction("❤️")}>❤️</Button>
+        <Button onClick={() => handleAddReaction("😂")}>😂</Button>
+      </div>
+    </div>
+  );
+};
 
 export default Chatroom;
