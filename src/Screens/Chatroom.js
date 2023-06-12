@@ -15,6 +15,7 @@ class Chatroom extends React.Component {
     this.state = {
       messages: [],
       text: "",
+      reactions: {},
     };
   }
 
@@ -28,24 +29,15 @@ class Chatroom extends React.Component {
       }
     });
 
-    fetch(this.props.server_url + "/api/rooms/messages", {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ roomName: roomID }),
-    }).then((res) => {
-      res.json().then((data) => {
-        const messageArray = [];
-        for (let cnt = 0; cnt < data.length; cnt++) {
-          messageArray.push(data[cnt].message.text);
-        }
+    // Fetch initial messages from the server if needed
+    // ...
 
-        this.setState({ messages: messageArray });
-      });
-    });
+    // Fetch initial reactions from the server if needed
+    // ...
+
+    // Example code to set initial reactions
+    // const initialReactions = {}; // Replace with actual initial reactions data
+    // this.setState({ reactions: initialReactions });
   }
 
   componentWillUnmount() {
@@ -56,8 +48,22 @@ class Chatroom extends React.Component {
 
   handleReceivedMessage = (message) => {
     this.setState((prevState) => ({
-      messages: [...prevState.messages, message.text],
+      messages: [...prevState.messages, message],
+      reactions: { ...prevState.reactions, [message.id]: [] },
     }));
+  };
+
+  addReaction = (messageId, reaction) => {
+    const { reactions } = this.state;
+    const updatedReactions = { ...reactions };
+
+    if (!updatedReactions[messageId]) {
+      updatedReactions[messageId] = [];
+    }
+
+    updatedReactions[messageId].push(reaction);
+
+    this.setState({ reactions: updatedReactions });
   };
 
   sendMessage = () => {
@@ -76,12 +82,34 @@ class Chatroom extends React.Component {
   };
 
   render() {
+    const { messages, reactions } = this.state;
+
     return (
       <div>
         <h1>Chatroom</h1>
         <ul>
-          {this.state.messages.map((message) => (
-            <li key={"messageKey" + message}>{message}</li>
+          {messages.map((message) => (
+            <li key={message.id}>
+              {message.text}
+              <div>
+                {reactions[message.id] &&
+                  reactions[message.id].map((reaction, index) => (
+                    <span key={`reactionKey${index}`}>{reaction}</span>
+                  ))}
+              </div>
+              <Button onClick={() => this.addReaction(message.id, "like")}>
+               👍
+              </Button>
+              <Button onClick={() => this.addReaction(message.id, "dislike")}>
+               👎
+              </Button>
+              <Button onClick={() => this.addReaction(message.id, "heart")}>
+              ❤️
+              </Button>
+              <Button onClick={() => this.addReaction(message.id, "laugh")}>
+              😂
+              </Button>
+            </li>
           ))}
         </ul>
         <input
