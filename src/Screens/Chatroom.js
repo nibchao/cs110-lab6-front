@@ -106,7 +106,7 @@ class Chatroom extends React.Component {
           {messages.map((message, index) => (
             <li key={"messageKey" + index} style={{paddingBottom: 20}}>
               {message}{" "}
-              {" [ Reactions: " + this.state.reactionMessages[index] + " ]"}
+              {": [ Reactions: " + (this.state.reactionMessages[index] ? this.state.reactionMessages[index] : '' ) + " ]"}
               <ReactionButton
                 messageId={index}
                 reactions={reactions[index] || []}
