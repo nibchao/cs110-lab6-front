@@ -98,7 +98,7 @@ class Chatroom extends React.Component {
           {this.state.messages.map((message, sender) => (
             <div key={"messageKey" + sender} style={{ paddingBottom: "10px" }}>
               <div style={{ fontWeight: "bold"}}>{this.state.timestampSender[sender]}{" "}</div>
-              {this.state.messageSender[sender]}: {message}
+              {message}
             </div>
           ))}
         </ul>
