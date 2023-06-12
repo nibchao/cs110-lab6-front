@@ -1,4 +1,5 @@
 import react from "react";
+import "./Auth.css"
 import Form from "../Components/form.js";
 import { Button } from "@mui/material";
 
@@ -82,7 +83,7 @@ class Auth extends react.Component {
       }
     } else {
       display = (
-        <div>
+        <div id="button-container">
           <Button
             onClick={() =>
               this.setState({ showForm: true, selectedForm: "login" })
@@ -101,8 +102,8 @@ class Auth extends react.Component {
       );
     }
     return (
-      <div>
-        <h1> Welcome to our website! </h1>
+      <div id="main-container">
+        <h1 id="welcome"> Welcome to our website! </h1>
         {display}
       </div>
     );

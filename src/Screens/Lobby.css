@@ -1,0 +1,55 @@
+input{
+    /* margin-left:20px; */
+}
+
+#logout{
+    margin-bottom: 50px;
+    /* background-color: transparent;
+    box-shadow:none; */
+}
+
+#manage-header{
+    display:flex;
+    justify-content: center;
+}
+
+#createRoom{
+    /* width: 150px; */
+    display:flex;
+    justify-content:center;
+}
+
+#joinRoom{
+    /* width: 150px; */
+    display:flex;
+    justify-content:center;
+}
+
+#leaveRoom{
+    /* width: 150px; */
+    display:flex;
+    justify-content:center;
+}
+
+#createRoomButton{
+    width:150px;
+}
+
+#joinRoomButton{
+    width:150px;
+}
+
+#leaveRoomButton{
+    width:150px;
+}
+
+#lobby-header{
+    display:flex;
+    justify-content: center;
+}
+
+#rooms-container{
+    display:flex;
+    justify-content: center;
+    gap:10px;
+}

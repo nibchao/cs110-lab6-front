@@ -1,6 +1,7 @@
 import React from "react";
 import { io } from "socket.io-client";
 import { Button } from "@mui/material";
+import "./Chatroom.css"
 
 class Chatroom extends React.Component {
   constructor(props) {
@@ -78,20 +79,26 @@ class Chatroom extends React.Component {
   render() {
     return (
       <div>
-        <h1>Chatroom</h1>
-        <ul>
-          {this.state.messages.map((message) => (
-            <li key={"messageKey" + message}>{message}</li>
-          ))}
-        </ul>
-        <input
-          type="text"
-          id="text"
-          value={this.state.text}
-          onChange={this.handleTextChange}
-        />
-        <Button onClick={this.sendMessage}>Send</Button>
         <Button onClick={this.back}>Back</Button>
+        <h1>Chatroom</h1>
+        <div id="chat-container">
+          <ul id="chat-box">
+            {this.state.messages.map((message) => (
+              <li key={"messageKey" + message}>{message}</li>
+            ))}
+          </ul>
+        </div>
+        <div id="input-container">
+          <input
+            type="text"
+            id="text"
+            value={this.state.text}
+            onChange={this.handleTextChange}
+          />
+          <Button onClick={this.sendMessage}>Send</Button>
+          
+        </div>
+        
       </div>
     );
   }

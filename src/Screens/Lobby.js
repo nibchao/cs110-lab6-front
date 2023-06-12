@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 import Auth from "./Auth";
 import { io } from "socket.io-client";
 import Chatroom from "./Chatroom";
-
+import "./Lobby.css"
 class Lobby extends React.Component {
   constructor(props) {
     super(props);
@@ -132,7 +132,7 @@ class Lobby extends React.Component {
 
     return (
       <div>
-        <Button
+        <Button id="logout"
           variant="contained"
           onClick={() => {
             fetch(this.props.server_url + "/api/auth/logout", {
@@ -157,8 +157,11 @@ class Lobby extends React.Component {
         >
           Logout
         </Button>
-        <div>
-          <Button
+        <div id="manage-header">
+          <h1>Manage Rooms</h1>
+        </div>
+        <div id="createRoom"> 
+          <Button id="createRoomButton"
             variant="contained"
             onClick={() => this.createRoom(this.state.room)} // don't change "this.state.room" because it breaks otherwise, works as is for some reason
           >
@@ -174,8 +177,8 @@ class Lobby extends React.Component {
             }}
           ></input>
         </div>
-        <div>
-          <Button
+        <div id="joinRoom">
+          <Button id="joinRoomButton"
             variant="contained"
             onClick={() => this.joinRoom(this.state.room)}
           >
@@ -191,8 +194,8 @@ class Lobby extends React.Component {
             }}
           />
         </div>
-        <div>
-          <Button variant="contained" onClick={() => this.leaveRoom(this.state.room)}>Leave Room</Button>
+        <div id="leaveRoom" >
+          <Button id="leaveRoomButton" variant="contained" onClick={() => this.leaveRoom(this.state.room)}>Leave Room</Button>
           <input
             type="search"
             id="leave-room-name"
@@ -203,20 +206,26 @@ class Lobby extends React.Component {
             }}
           />
         </div>
-        <h1>Lobby</h1>
-        {rooms ? (
-          rooms.map((room) => (
-            <Button
-              variant="contained"
-              key={"roomKey" + room}
-              onClick={() => this.handleRoomSelect(room)}
-            >
-              {room}
-            </Button>
-          ))
-        ) : (
-          <p>Loading...</p>
-        )}
+        <div id="lobby-header">
+          <h1>Joined Rooms</h1>
+        </div>
+        
+        <div id="rooms-container">
+          {rooms ? (
+            rooms.map((room) => (
+              <Button
+                variant="contained"
+                key={"roomKey" + room}
+                onClick={() => this.handleRoomSelect(room)}
+              >
+                {room}
+              </Button>
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div>
+        
       </div>
     );
   }
