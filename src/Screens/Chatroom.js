@@ -131,11 +131,11 @@ const ReactionButton = ({ messageId, reactions, addReaction }) => {
         <span key={`reactionKey${index}`}>{reaction}</span>
       ))}
       <div>
-        <ToggleButtonGroup>
-          <ToggleButton onClick={() => handleAddReaction("👍")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👍</ToggleButton>
-          <ToggleButton onClick={() => handleAddReaction("👎")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👎</ToggleButton>
-          <ToggleButton onClick={() => handleAddReaction("❤️")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>❤️</ToggleButton>
-          <ToggleButton onClick={() => handleAddReaction("😂")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>😂</ToggleButton>
+        <ToggleButtonGroup size="small">
+          <ToggleButton value="thumbsup" onClick={() => handleAddReaction("👍")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👍</ToggleButton>
+          <ToggleButton value="thumbsdown" onClick={() => handleAddReaction("👎")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>👎</ToggleButton>
+          <ToggleButton value="heart" onClick={() => handleAddReaction("❤️")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>❤️</ToggleButton>
+          <ToggleButton value="joy" onClick={() => handleAddReaction("😂")} sx={{":hover": {bgcolor: "#AF5", color: "white"}, borderRadius: "30px"}}>😂</ToggleButton>
         </ToggleButtonGroup>
       </div>
     </div>
