@@ -211,9 +211,6 @@ const ReactionButton = ({ messageId, reactions, addReaction, messageText, messag
 
   return (
     <div>
-      {reactions.map((reaction, index) => (
-        <span key={`reactionKey${index}`}>{reaction}</span>
-      ))}
       <div>
         <ToggleButtonGroup size="small">
           <ToggleButton
