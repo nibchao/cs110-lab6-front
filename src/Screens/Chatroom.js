@@ -32,6 +32,31 @@ class Chatroom extends React.Component {
       }
     });
 
+    this.socket.on('reaction', () => {
+      fetch(this.props.server_url + "/api/rooms/messages", {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roomName: this.props.roomID }),
+      }).then((res) => {
+        res.json().then((data) => {
+          const messageArray = [];
+          const senderArray = [];
+          const reactionArray = [];
+          for (let cnt = 0; cnt < data.length; cnt++) {
+            messageArray.push(data[cnt].message.text);
+            reactionArray.push(data[cnt].reactions);
+            senderArray.push(data[cnt].sender);
+          }
+  
+          this.setState({ messages: messageArray,  messageSender: senderArray, reactionMessages: reactionArray });
+        });
+      });
+    })
+
     fetch(this.props.server_url + "/api/rooms/messages", {
       method: "POST",
       mode: "cors",
@@ -63,10 +88,33 @@ class Chatroom extends React.Component {
   }
 
   handleReceivedMessage = (message) => {
+    console.log('message:',message)
     this.setState((prevState) => ({
       messages: [...prevState.messages, message.text],
       reactions: { ...prevState.reactions, [message.id]: [] },
     }));
+    fetch(this.props.server_url + "/api/rooms/messages", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ roomName: message.room }),
+    }).then((res) => {
+      res.json().then((data) => {
+        const messageArray = [];
+        const senderArray = [];
+        const reactionArray = [];
+        for (let cnt = 0; cnt < data.length; cnt++) {
+          messageArray.push(data[cnt].message.text);
+          reactionArray.push(data[cnt].reactions);
+          senderArray.push(data[cnt].sender);
+        }
+
+        this.setState({ messages: messageArray,  messageSender: senderArray, reactionMessages: reactionArray });
+      });
+    });
   };
 
   addReaction = (messageId, reaction, messageText, messageSender, isAdding) => {
@@ -95,6 +143,28 @@ class Chatroom extends React.Component {
     const { roomID } = this.props;
     this.socket.emit("chat message", { room: roomID, text });
     this.setState({ text: "" });
+    fetch(this.props.server_url + "/api/rooms/messages", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ roomName: roomID }),
+    }).then((res) => {
+      res.json().then((data) => {
+        const messageArray = [];
+        const senderArray = [];
+        const reactionArray = [];
+        for (let cnt = 0; cnt < data.length; cnt++) {
+          messageArray.push(data[cnt].message.text);
+          reactionArray.push(data[cnt].reactions);
+          senderArray.push(data[cnt].sender);
+        }
+
+        this.setState({ messages: messageArray,  messageSender: senderArray, reactionMessages: reactionArray });
+      });
+    });
   };
 
   handleTextChange = (e) => {
