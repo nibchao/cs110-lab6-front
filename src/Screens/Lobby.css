@@ -17,12 +17,18 @@ input{
     /* width: 150px; */
     display:flex;
     justify-content:center;
+    margin-bottom:10px;
 }
 
 #joinRoom{
     /* width: 150px; */
     display:flex;
     justify-content:center;
+    margin-bottom: 10px;
+}
+
+#join-room-name{
+    margin-left:10px;
 }
 
 #leaveRoom{
@@ -31,8 +37,16 @@ input{
     justify-content:center;
 }
 
+#leave-room-name{
+    margin-left:10px;
+}
+
 #createRoomButton{
     width:150px;
+}
+
+#room-name{
+    margin-left:10px;
 }
 
 #joinRoomButton{
