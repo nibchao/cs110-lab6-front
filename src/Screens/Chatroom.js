@@ -16,6 +16,8 @@ class Chatroom extends React.Component {
       messages: [],
       text: "",
       reactions: {},
+      messageSender: [],
+      reactionMessages: [],
     };
   }
 
@@ -40,11 +42,15 @@ class Chatroom extends React.Component {
     }).then((res) => {
       res.json().then((data) => {
         const messageArray = [];
+        const senderArray = [];
+        const reactionArray = [];
         for (let cnt = 0; cnt < data.length; cnt++) {
           messageArray.push(data[cnt].message.text);
+          reactionArray.push(data[cnt].reactions);
+          senderArray.push(data[cnt].sender);
         }
 
-        this.setState({ messages: messageArray });
+        this.setState({ messages: messageArray,  messageSender: senderArray, reactionMessages: reactionArray });
       });
     });
   }
@@ -62,7 +68,8 @@ class Chatroom extends React.Component {
     }));
   };
 
-  addReaction = (messageId, reaction) => {
+  addReaction = (messageId, reaction, messageText, messageSenderID) => {
+    this.socket.emit("reaction", { messageText: messageText, messageSenderID: messageSenderID, reaction: reaction, roomName: this.props.roomID });
     this.setState((prevState) => {
       const { reactions } = prevState;
       const updatedReactions = {
@@ -98,11 +105,14 @@ class Chatroom extends React.Component {
         <ul>
           {messages.map((message, index) => (
             <li key={"messageKey" + index} style={{paddingBottom: 20}}>
-              {message}
+              {message}{" "}
+              {" [ Reactions: " + this.state.reactionMessages[index] + " ]"}
               <ReactionButton
                 messageId={index}
                 reactions={reactions[index] || []}
                 addReaction={this.addReaction}
+                messageText={message}
+                messageSender={this.state.messageSender[index]}
               />
             </li>
           ))}
@@ -120,9 +130,9 @@ class Chatroom extends React.Component {
   }
 }
 
-const ReactionButton = ({ messageId, reactions, addReaction }) => {
+const ReactionButton = ({ messageId, reactions, addReaction, messageText, messageSender }) => {
   const handleAddReaction = (reaction) => {
-    addReaction(messageId, reaction);
+    addReaction(messageId, reaction, messageText, messageSender);
   };
 
   return (
