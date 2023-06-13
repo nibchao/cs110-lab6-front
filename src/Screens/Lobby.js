@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import Auth from "./Auth";
 import { io } from "socket.io-client";
 import Chatroom from "./Chatroom";
+import "./Lobby.css";
 
 class Lobby extends React.Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class Lobby extends React.Component {
       rooms: undefined,
       screen: "",
       selectedRoom: null,
+      room: "",
     };
   }
 
@@ -49,9 +51,8 @@ class Lobby extends React.Component {
   };
 
   createRoom = (data) => {
-    console.log(data);
     if (document.getElementById("room-name").value === "") {
-      console.log("input was empty, not creating room");
+      alert("Input for room name was empty, failed to create room.");
     } else {
       document.getElementById("room-name").value = "";
       fetch(this.props.server_url + "/api/rooms/create", {
@@ -64,13 +65,7 @@ class Lobby extends React.Component {
         body: JSON.stringify({ roomName: data }),
       }).then((res) => {
         res.json().then((data) => {
-          // if (data.status === false) {
-          //   console.log("failed to make room");
-          // } else {
-          //   alert(`${this.state.room} room created`);
-          //   window.location.reload();
-          // }
-          // this.setState({  })
+          alert(`Created room with "${data.name}" name!`);
           window.location.reload();
         });
       });
@@ -79,7 +74,7 @@ class Lobby extends React.Component {
 
   joinRoom = (data) => {
     if (document.getElementById("join-room-name").value === "") {
-      console.log("input was empty, not joining room");
+      alert("Input for room name was empty, failed to join room.");
     } else {
       document.getElementById("join-room-name").value = "";
       fetch(this.props.server_url + "/api/rooms/join", {
@@ -93,15 +88,20 @@ class Lobby extends React.Component {
       })
         .then((res) => res.json())
         .then((data) => {
-          this.setState({ room: data });
-          window.location.reload();
+          this.setState({ room: data.room });
+          if (data.room !== undefined) {
+            alert(`Joined ${data.room} room!`);
+            window.location.reload();
+          } else {
+            alert(data.message);
+          }
         });
     }
   };
 
   leaveRoom = (data) => {
     if (document.getElementById("leave-room-name").value === "") {
-      console.log("input was empty, did not leave room");
+      alert("Input for room name was empty, failed to leave room.");
     } else {
       document.getElementById("leave-room-name").value = "";
       fetch(this.props.server_url + "/api/rooms/leave", {
@@ -115,8 +115,13 @@ class Lobby extends React.Component {
       })
         .then((res) => res.json())
         .then((data) => {
-          this.setState({ room: data });
-          window.location.reload();
+          this.setState({ room: data.room });
+          if (data.room !== undefined) {
+            alert(`Left ${data.room} room.`);
+            window.location.reload();
+          } else {
+            alert(data.message);
+          }
         });
     }
   };
@@ -139,6 +144,7 @@ class Lobby extends React.Component {
       <div>
         <Button
           variant="contained"
+          id="logout-Button"
           onClick={() => {
             fetch(this.props.server_url + "/api/auth/logout", {
               method: "GET",
@@ -162,71 +168,86 @@ class Lobby extends React.Component {
         >
           Logout
         </Button>
-        <div>
-          <Button
-            variant="contained"
-            onClick={() => this.createRoom(this.state.room)} // don't change "this.state.room" because it breaks otherwise, works as is for some reason
-          >
-            Create Room
-          </Button>
-          <input
-            type="search"
-            id="room-name"
-            placeholder="Enter room name to create..."
-            style={{ width: "300px" }}
-            onChange={(e) => {
-              this.setState({ room: e.target.value });
-            }}
-          ></input>
+
+        <div id="manage-room-container">
+          <h1>Manage Rooms</h1>
+          <div id="manage-button-container">
+            <div>
+              <Button
+                id="create-room-button"
+                variant="contained"
+                onClick={() => this.createRoom(this.state.room)}
+              >
+                Create Room
+              </Button>
+              <input
+                className="input-design"
+                type="search"
+                id="room-name"
+                placeholder="Enter room name to create..."
+                style={{ width: "300px" }}
+                onChange={(e) => {
+                  this.setState({ room: e.target.value });
+                }}
+              ></input>
+            </div>
+            <div>
+              <Button
+                id="join-room-button"
+                variant="contained"
+                onClick={() => this.joinRoom(this.state.room)}
+              >
+                Join Room
+              </Button>
+              <input
+                className="input-design"
+                type="search"
+                id="join-room-name"
+                placeholder="Enter room name to join..."
+                style={{ width: "300px" }}
+                onChange={(e) => {
+                  this.setState({ room: e.target.value });
+                }}
+              />
+            </div>
+            <div>
+              <Button
+                id="leave-room-button"
+                variant="contained"
+                onClick={() => this.leaveRoom(this.state.room)}
+              >
+                Leave Room
+              </Button>
+              <input
+                className="input-design"
+                type="search"
+                id="leave-room-name"
+                placeholder="Enter room name to leave..."
+                style={{ width: "300px" }}
+                onChange={(e) => {
+                  this.setState({ room: e.target.value });
+                }}
+              />
+            </div>
+          </div>
         </div>
-        <div>
-          <Button
-            variant="contained"
-            onClick={() => this.joinRoom(this.state.room)}
-          >
-            Join Room
-          </Button>
-          <input
-            type="search"
-            id="join-room-name"
-            placeholder="Enter room name to join..."
-            style={{ width: "300px" }}
-            onChange={(e) => {
-              this.setState({ room: e.target.value });
-            }}
-          />
+        <h1 id="lobby-header">Lobby</h1>
+        <div id="lobby-container">
+          {rooms ? (
+            rooms.map((room) => (
+              <Button
+                id="room-buttons"
+                variant="contained"
+                key={"roomKey" + room}
+                onClick={() => this.handleRoomSelect(room)}
+              >
+                {room}
+              </Button>
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
-        <div>
-          <Button
-            variant="contained"
-            onClick={() => this.leaveRoom(this.state.room)}
-          >
-            Leave Room
-          </Button>
-          <input
-            type="search"
-            id="leave-room-name"
-            placeholder="Enter room name to leave..."
-            style={{ width: "300px" }}
-            onChange={(e) => {
-              this.setState({ room: e.target.value });
-            }}
-          />
-        </div>
-        <h1>Lobby</h1>
-        {rooms ? (
-          rooms.map((room) => (
-            <Button
-              variant="contained"
-              key={"roomKey" + room}
-              onClick={() => this.handleRoomSelect(room)}
-            >
-              {room}
-            </Button>
-          ))
-        ) : (
-          <p>Loading...</p>
-        )}
       </div>
     );
   }

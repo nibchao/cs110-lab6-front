@@ -2,6 +2,7 @@ import React from "react";
 import { io } from "socket.io-client";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
+import "./Chatroom.css";
 
 class Chatroom extends React.Component {
   constructor(props) {
@@ -29,9 +30,9 @@ class Chatroom extends React.Component {
     const { roomID } = this.props;
     this.socket.emit("join", { room: roomID });
 
-    this.socket.on("chat message", (message) => {
-      if (message.room === roomID) {
-        this.handleReceivedMessage(message);
+    this.socket.on("chat message", (data) => {
+      if (data.room === roomID) {
+        this.handleReceivedMessage(data);
       }
     });
 
@@ -104,7 +105,7 @@ class Chatroom extends React.Component {
 
   handleReceivedMessage = async (message) => {
     this.setState((prevState) => ({
-      messages: [...prevState.messages, message.text],
+      messages: [...prevState.messages, message.messageText],
       reactions: { ...prevState.reactions, [message.id]: [] },
     }));
     this.fetchMessageHistory();
@@ -158,41 +159,59 @@ class Chatroom extends React.Component {
     const { messages, reactions } = this.state;
 
     return (
-      <div>
-        <h1>Chatroom</h1>
-        <ul>
-          {messages.map((message, index) => (
-            <li key={"messageKey" + index} style={{ paddingBottom: 20 }}>
-              <div>{this.state.timestampSender[index]}</div>
-              {this.state.messageSenderNames[index]}
-              {": "}
-              {message}{" "}
-              <div>
-                {"[ Reactions: " +
-                  (this.state.reactionMessages[index]
+      <div id="chat-room">
+        <Button variant="filled" id="back-button" onClick={this.back}>
+          Back To Rooms
+        </Button>
+        <h1>{`Room: ${this.props.roomID}`}</h1>
+        <div id="chat-container">
+          <ul id="chat-box">
+            {messages.map((message, index) => (
+              <li
+                id="chat-list"
+                key={"messageKey" + index}
+                style={{ paddingBottom: 20 }}
+              >
+                <div id="sender-name">
+                  {"@"}
+                  {this.state.messageSenderNames[index]}
+                </div>
+                {message}{" "}
+                <div id="message-timestamp">
+                  {this.state.timestampSender[index]}
+                </div>
+                <div id="reaction-container">
+                  {this.state.reactionMessages[index]
                     ? this.state.reactionMessages[index]
-                    : "") +
-                  " ]"}
-              </div>
-              <ReactionButton
-                messageId={index}
-                reactions={reactions[index] || []}
-                addReaction={this.addReaction}
-                messageText={message}
-                messageSender={this.state.messageSender[index]}
-                createdAtTime={this.state.messageCreatedAt[index]}
-              />
-            </li>
-          ))}
-        </ul>
-        <input
-          type="text"
-          id="text"
-          value={this.state.text}
-          onChange={this.handleTextChange}
-        />
-        <Button onClick={this.sendMessage}>Send</Button>
-        <Button onClick={this.back}>Back</Button>
+                    : ""}
+                </div>
+                <ReactionButton
+                  messageId={index}
+                  reactions={reactions[index] || []}
+                  addReaction={this.addReaction}
+                  messageText={message}
+                  messageSender={this.state.messageSender[index]}
+                  createdAtTime={this.state.messageCreatedAt[index]}
+                />
+              </li>
+            ))}
+          </ul>
+          <div id="input-container">
+            <input
+              type="text"
+              id="text"
+              value={this.state.text}
+              onChange={this.handleTextChange}
+            />
+            <Button
+              variant="filled"
+              id="send-button"
+              onClick={this.sendMessage}
+            >
+              Send
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
