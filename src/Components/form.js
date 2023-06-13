@@ -35,7 +35,7 @@ class Form extends react.Component{
         return (
             <div>
                 <div>
-                    <Button onClick={this.props.close}> x </Button>
+                    <Button onClick={this.props.close}> Go Back </Button>
                     <h3> {this.props.type} </h3>
                 </div>
 

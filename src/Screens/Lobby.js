@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import Auth from "./Auth";
 import { io } from "socket.io-client";
 import Chatroom from "./Chatroom";
+import "./Lobby.css"
 
 class Lobby extends React.Component {
   constructor(props) {
@@ -162,71 +163,81 @@ class Lobby extends React.Component {
         >
           Logout
         </Button>
-        <div>
-          <Button
-            variant="contained"
-            onClick={() => this.createRoom(this.state.room)} // don't change "this.state.room" because it breaks otherwise, works as is for some reason
-          >
-            Create Room
-          </Button>
-          <input
-            type="search"
-            id="room-name"
-            placeholder="Enter room name to create..."
-            style={{ width: "300px" }}
-            onChange={(e) => {
-              this.setState({ room: e.target.value });
-            }}
-          ></input>
+        
+        <div id="manage-room-container">
+          <h1>Manage Rooms</h1>
+          <div id="manage-button-container">
+            <div>
+              <Button id="create-room-button"
+                variant="contained"
+                onClick={() => this.createRoom(this.state.room)} // don't change "this.state.room" because it breaks otherwise, works as is for some reason
+              >
+                Create Room
+              </Button>
+              <input className="input-design"
+                type="search"
+                id="room-name"
+                placeholder="Enter room name to create..."
+                style={{ width: "300px" }}
+                onChange={(e) => {
+                  this.setState({ room: e.target.value });
+                }}
+              ></input>
+            </div>
+            <div>
+              <Button id="join-room-button"
+                variant="contained"
+                onClick={() => this.joinRoom(this.state.room)}
+              >
+                Join Room
+              </Button>
+              <input className="input-design"
+                type="search"
+                id="join-room-name"
+                placeholder="Enter room name to join..."
+                style={{ width: "300px" }}
+                onChange={(e) => {
+                  this.setState({ room: e.target.value });
+                }}
+              />
+            </div>
+            <div>
+              <Button id="leave-room-button"
+                variant="contained"
+                onClick={() => this.leaveRoom(this.state.room)}
+              >
+                Leave Room
+              </Button>
+              <input className="input-design"
+                type="search"
+                id="leave-room-name"
+                placeholder="Enter room name to leave..."
+                style={{ width: "300px" }}
+                onChange={(e) => {
+                  this.setState({ room: e.target.value });
+                }}
+              />
+            </div>
+          </div>
         </div>
-        <div>
-          <Button
-            variant="contained"
-            onClick={() => this.joinRoom(this.state.room)}
-          >
-            Join Room
-          </Button>
-          <input
-            type="search"
-            id="join-room-name"
-            placeholder="Enter room name to join..."
-            style={{ width: "300px" }}
-            onChange={(e) => {
-              this.setState({ room: e.target.value });
-            }}
-          />
+        <h1 id="lobby-header">Lobby</h1>
+        <div id="lobby-container">
+          
+          {rooms ? (
+            rooms.map((room) => (
+              <Button id="room-buttons"
+                variant="contained"
+                key={"roomKey" + room}
+                onClick={() => this.handleRoomSelect(room)}
+              >
+                {room}
+              </Button>
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
-        <div>
-          <Button
-            variant="contained"
-            onClick={() => this.leaveRoom(this.state.room)}
-          >
-            Leave Room
-          </Button>
-          <input
-            type="search"
-            id="leave-room-name"
-            placeholder="Enter room name to leave..."
-            style={{ width: "300px" }}
-            onChange={(e) => {
-              this.setState({ room: e.target.value });
-            }}
-          />
-        </div>
-        <h1>Lobby</h1>
-        {rooms ? (
-          rooms.map((room) => (
-            <Button
-              variant="contained"
-              key={"roomKey" + room}
-              onClick={() => this.handleRoomSelect(room)}
-            >
-              {room}
-            </Button>
-          ))
-        ) : (
-          <p>Loading...</p>
-        )}
+        
       </div>
     );
   }

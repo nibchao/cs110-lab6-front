@@ -2,6 +2,7 @@ import React from "react";
 import { io } from "socket.io-client";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
+import "./Chatroom.css"
 
 class Chatroom extends React.Component {
   constructor(props) {
@@ -146,40 +147,48 @@ class Chatroom extends React.Component {
     const { messages, reactions } = this.state;
 
     return (
-      <div>
+      <div id="chat-room">
+        <Button id="back-button" onClick={this.back}>Back To Rooms</Button>
         <h1>Chatroom</h1>
-        <ul>
-          {messages.map((message, index) => (
-            <li key={"messageKey" + index} style={{ paddingBottom: 20 }}>
-              <div>{this.state.timestampSender[index]}</div>
-              {this.state.messageSenderNames[index]}
-              {": "}
-              {message}{" "}
-              <div>
-                {"[ Reactions: " +
-                  (this.state.reactionMessages[index]
-                    ? this.state.reactionMessages[index]
-                    : "") +
-                  " ]"}
-              </div>
-              <ReactionButton
-                messageId={index}
-                reactions={reactions[index] || []}
-                addReaction={this.addReaction}
-                messageText={message}
-                messageSender={this.state.messageSender[index]}
-              />
-            </li>
-          ))}
-        </ul>
-        <input
-          type="text"
-          id="text"
-          value={this.state.text}
-          onChange={this.handleTextChange}
-        />
-        <Button onClick={this.sendMessage}>Send</Button>
-        <Button onClick={this.back}>Back</Button>
+        <div id="chat-container">
+          <ul id="chat-box">
+            {messages.map((message, index) => (
+              <li id="chat-list" key={"messageKey" + index} style={{ paddingBottom: 20 }}>
+                <div id="sender-name">
+                  {this.state.messageSenderNames[index]}
+                </div>               
+                {/* {": "} */}
+                {message}{" "}
+                <div id="message-timestamp">{this.state.timestampSender[index]}</div>
+                <div id="reaction-container">
+                  {
+                    (this.state.reactionMessages[index]
+                      ? this.state.reactionMessages[index]
+                      : "")}
+                </div>
+                <ReactionButton
+                  messageId={index}
+                  reactions={reactions[index] || []}
+                  addReaction={this.addReaction}
+                  messageText={message}
+                  messageSender={this.state.messageSender[index]}
+                />
+              </li>
+            ))}
+          </ul>
+          <div id="input-container">
+          <input
+            type="text"
+            id="text"
+            value={this.state.text}
+            onChange={this.handleTextChange}
+          />
+          <Button id="send-button" onClick={this.sendMessage}>Send</Button>
+          </div>
+        </div>
+        
+        
+        
       </div>
     );
   }

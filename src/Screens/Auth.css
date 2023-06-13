@@ -1,0 +1,15 @@
+#main-container{
+    height:100vh;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;  
+    flex-direction: column;
+}
+#chat-icon{
+    margin-bottom: 30px;
+}
+
+ h1{
+    font-family: Helvetica;
+ }
