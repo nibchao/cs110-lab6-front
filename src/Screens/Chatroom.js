@@ -30,9 +30,9 @@ class Chatroom extends React.Component {
     const { roomID } = this.props;
     this.socket.emit("join", { room: roomID });
 
-    this.socket.on("chat message", (message) => {
-      if (message.room === roomID) {
-        this.handleReceivedMessage(message);
+    this.socket.on("chat message", (data) => {
+      if (data.room === roomID) {
+        this.handleReceivedMessage(data);
       }
     });
 
@@ -163,7 +163,7 @@ class Chatroom extends React.Component {
         <Button id="back-button" onClick={this.back}>
           Back To Rooms
         </Button>
-        <h1>Chatroom</h1>
+        <h1>{`Room: ${this.props.roomID}`}</h1>
         <div id="chat-container">
           <ul id="chat-box">
             {messages.map((message, index) => (
