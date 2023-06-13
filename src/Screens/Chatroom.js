@@ -176,7 +176,6 @@ class Chatroom extends React.Component {
                   {"@"}
                   {this.state.messageSenderNames[index]}
                 </div>
-                {/* {": "} */}
                 {message}{" "}
                 <div id="message-timestamp">
                   {this.state.timestampSender[index]}
@@ -204,7 +203,11 @@ class Chatroom extends React.Component {
               value={this.state.text}
               onChange={this.handleTextChange}
             />
-            <Button variant="filled" id="send-button" onClick={this.sendMessage}>
+            <Button
+              variant="filled"
+              id="send-button"
+              onClick={this.sendMessage}
+            >
               Send
             </Button>
           </div>

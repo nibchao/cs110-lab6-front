@@ -61,25 +61,24 @@ class Auth extends react.Component {
   otpToken = (event) => {
     event.preventDefault();
     this.setState({
-        isButtonDisabled: true
+      isButtonDisabled: true,
     });
     setTimeout(() => this.setState({ isButtonDisabled: false }), 10000);
-    // COMMENTED OUT TO MAKE LOGGING IN LESS ANNOYING
-    // fetch(this.props.server_url + "/api/auth/otptoken", {
-    //   method: "POST",
-    //   mode: "cors",
-    //   credentials: "include",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Accept: "application/json",
-    //   },
-    //   body: JSON.stringify({ Email: document.getElementById('Email').value }),
-    // }).then((res) => {
-    //   res.json().then((data) => {
-    //     alert(data.message)
-    //     this.setState({ generatedOTPToken: data.dataSaved.generatedOTP });
-    //   });
-    // });
+    fetch(this.props.server_url + "/api/auth/otptoken", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ Email: document.getElementById("Email").value }),
+    }).then((res) => {
+      res.json().then((data) => {
+        alert(data.message);
+        this.setState({ generatedOTPToken: data.dataSaved.generatedOTP });
+      });
+    });
   };
 
   render() {
@@ -98,7 +97,12 @@ class Auth extends react.Component {
               key={this.state.selectedForm}
               generatedOTP={this.state.generatedOTPToken}
             />
-            <Button variant="outlined" onClick={this.otpToken} id="generate-otp-button" disabled={this.state.isButtonDisabled}>
+            <Button
+              variant="outlined"
+              onClick={this.otpToken}
+              id="generate-otp-button"
+              disabled={this.state.isButtonDisabled}
+            >
               Generate OTP Token to Login
             </Button>
           </div>

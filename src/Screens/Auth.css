@@ -14,12 +14,15 @@ h1 {
   font-family: Helvetica;
 }
 
-#login-button, #register-button, #generate-otp-button{
+#login-button,
+#register-button,
+#generate-otp-button {
   border-radius: 10px;
   margin: 10px;
 }
 
-#login-button:hover, #register-button:hover{
+#login-button:hover,
+#register-button:hover {
   background-color: gold;
 }
 
