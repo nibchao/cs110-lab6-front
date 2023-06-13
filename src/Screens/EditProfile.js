@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import Auth from "./Auth";
 import { io } from "socket.io-client";
 import Form from "../Components/form";
+import './EditProfile.css'
 
 class EditProfile extends React.Component {
   constructor(props) {
@@ -71,7 +72,7 @@ class EditProfile extends React.Component {
       <Form
         fields={fields}
         close={this.logout}
-        type="Edit Profile Form"
+        type="Edit Profile Username Form"
         submit={this.editProfileSubmit}
         onChange={this.handleTextChange}
         key={"editprofile"}
@@ -81,6 +82,7 @@ class EditProfile extends React.Component {
       <div>
         <Button
           variant="contained"
+          id="logout-Button"
           onClick={() => {
             fetch(this.props.server_url + "/api/auth/logout", {
               method: "GET",
@@ -104,8 +106,10 @@ class EditProfile extends React.Component {
         >
           Logout
         </Button>
-        <h1>Edit Profile</h1>
+        <div id="wrapper">
+        <h1>Edit Profile Username</h1>
         {display}
+        </div>
       </div>
     );
   }

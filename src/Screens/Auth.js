@@ -60,6 +60,13 @@ class Auth extends react.Component {
 
   tempLogin = (data) => {
     fetch(this.props.server_url + "/api/auth/tempLogin", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify(data),
     }).then((res) => {
       res.json().then((data) => {
@@ -170,6 +177,8 @@ class Auth extends react.Component {
             Register
           </Button>
           <Button
+            variant="contained"
+            id="edit-profile-button"
             onClick={() =>
               this.setState({ showForm: true, selectedForm: "editprofile" })
             }
