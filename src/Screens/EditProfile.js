@@ -66,7 +66,7 @@ class EditProfile extends React.Component {
   };
 
   render() {
-    let fields = ["Current Username", "NewUsername"];
+    let fields = ["NewUsername"];
     let display = (
       <Form
         fields={fields}

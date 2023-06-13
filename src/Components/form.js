@@ -41,21 +41,7 @@ class Form extends react.Component{
 
                 <form onSubmit={this.handleSubmit}>
                     {this.state.fields.map((field, index) => {
-                        if (field[1] === "Current Username")
-                        {
-                            return(
-                                <div key={"auth"+field[1]}>
-                                    <TextField 
-                                        variant="standard" 
-                                        key={"auth"+field[1]} 
-                                        label={field[1]} 
-                                        id={field[1]}
-                                        disabled={true}
-                                    />
-                                </div>
-                            );
-                        }
-                        else if (field[1] === "password")
+                        if (field[1] === "password")
                         {
                             return(
                                 <div key={"auth"+field[1]}>
