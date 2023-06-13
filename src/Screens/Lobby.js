@@ -3,6 +3,9 @@ import { Button } from "@mui/material";
 import Auth from "./Auth";
 import { io } from "socket.io-client";
 import Chatroom from "./Chatroom";
+import UserProfile from "./UserProfile";
+import { useNavigate } from 'react-router-dom';
+//import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 class Lobby extends React.Component {
   constructor(props) {
@@ -19,8 +22,39 @@ class Lobby extends React.Component {
       rooms: undefined,
       screen: "",
       selectedRoom: null,
+      showProfile: false
     };
-  }
+    this.handleShowProfile = this.handleShowProfile.bind(this);
+    this.handleShowLobby = this.handleShowLobby = this.handleShowLobby.bind(this);
+    }
+  
+    handleShowProfile() {
+      this.setState({
+        showProfile: true
+      });
+      this.socket.emit("getUser", {username: this.state.username });
+    }
+ 
+    handleShowLobby() {
+      this.setState({
+        showProfile: false
+      });
+    }
+
+    // handleGetUserInfo() {
+    //   fetch(this.props.server_url + "/api/users/profile", {
+    //     method: "GET",
+    //     credentials: "include",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   })
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       this.setState({ rooms: data });
+    //     });
+    //   });
+    // }
 
   componentDidMount() {
     fetch(this.props.server_url + "/api/rooms/all", {
@@ -121,6 +155,16 @@ class Lobby extends React.Component {
     }
   };
 
+
+  // handleProfClick = () => {
+  //   const { username } = this.state;
+  //   this.setState({screen: "profile" });
+  //   //this.socket.emit("join", { room, username });
+  // };
+   
+ 
+  
+
   render() {
     const { rooms, selectedRoom, screen } = this.state;
 
@@ -196,6 +240,7 @@ class Lobby extends React.Component {
             }}
           />
         </div>
+
         <div>
           <Button
             variant="contained"
@@ -213,6 +258,24 @@ class Lobby extends React.Component {
             }}
           />
         </div>
+        
+
+      <div className="LobbyTest">
+        {this.state.showProfile ? (
+          <>
+            <UserProfile userId={this.state.username} />
+            <button onClick={this.handleShowLobby}> Return to Lobby </button>
+          </>
+          ) : ( 
+            <>
+              <h1> Profiles </h1>
+              <button onClick={this.handleShowProfile}> Edit Profile </button>
+
+            </>
+        )}
+      </div>
+                                      
+        
         <h1>Lobby</h1>
         {rooms ? (
           rooms.map((room) => (
