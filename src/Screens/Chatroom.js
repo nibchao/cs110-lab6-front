@@ -62,7 +62,9 @@ class Chatroom extends React.Component {
           senderArray.push(data[cnt].sender);
           let UTCTimestamp = data[cnt].createdAt;
           let localTimestamp = new Date(UTCTimestamp);
-          let shortenedTimestamp = localTimestamp.toString().replace(/GMT.*/g, "");
+          let shortenedTimestamp = localTimestamp
+            .toString()
+            .replace(/GMT.*/g, "");
           createdTimestampArray.push(shortenedTimestamp);
         }
 
@@ -76,9 +78,9 @@ class Chatroom extends React.Component {
           body: JSON.stringify({ userIDArray: senderArray }),
         }).then((res) => {
           res.json().then((data) => {
-              this.setState({messageSenderNames: data});
-            });
+            this.setState({ messageSenderNames: data });
           });
+        });
 
         this.setState({
           messages: messageArray,
@@ -150,12 +152,16 @@ class Chatroom extends React.Component {
           {messages.map((message, index) => (
             <li key={"messageKey" + index} style={{ paddingBottom: 20 }}>
               <div>{this.state.timestampSender[index]}</div>
-              {this.state.messageSenderNames[index]}{": "}{message}{" "}
-              <div>{"[ Reactions: " +
-                (this.state.reactionMessages[index]
-                  ? this.state.reactionMessages[index]
-                  : "") +
-                " ]"}</div>
+              {this.state.messageSenderNames[index]}
+              {": "}
+              {message}{" "}
+              <div>
+                {"[ Reactions: " +
+                  (this.state.reactionMessages[index]
+                    ? this.state.reactionMessages[index]
+                    : "") +
+                  " ]"}
+              </div>
               <ReactionButton
                 messageId={index}
                 reactions={reactions[index] || []}
