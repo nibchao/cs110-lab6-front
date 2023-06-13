@@ -21,6 +21,7 @@ class Chatroom extends React.Component {
       messageSenderNames: [],
       reactionMessages: [],
       timestampSender: [],
+      messageCreatedAt: [],
     };
   }
 
@@ -56,10 +57,12 @@ class Chatroom extends React.Component {
         const senderArray = [];
         const reactionArray = [];
         const createdTimestampArray = [];
+        const createdAtArray = [];
         for (let cnt = 0; cnt < data.length; cnt++) {
           messageArray.push(data[cnt].message.text);
           reactionArray.push(data[cnt].reactions);
           senderArray.push(data[cnt].sender);
+          createdAtArray.push(data[cnt].createdAt);
           let UTCTimestamp = data[cnt].createdAt;
           let localTimestamp = new Date(UTCTimestamp);
           let shortenedTimestamp = localTimestamp
@@ -87,6 +90,7 @@ class Chatroom extends React.Component {
           messageSender: senderArray,
           reactionMessages: reactionArray,
           timestampSender: createdTimestampArray,
+          messageCreatedAt: createdAtArray,
         });
       });
     });
@@ -106,13 +110,21 @@ class Chatroom extends React.Component {
     this.fetchMessageHistory();
   };
 
-  addReaction = (messageId, reaction, messageText, messageSender, isAdding) => {
+  addReaction = (
+    messageId,
+    reaction,
+    messageText,
+    messageSender,
+    isAdding,
+    createdAtTime
+  ) => {
     this.socket.emit("reaction", {
       messageText: messageText,
       messageSenderID: messageSender,
       reaction: reaction,
       roomName: this.props.roomID,
       isAdding: isAdding, // Pass the isAdding parameter to the server
+      createdAtTime: createdAtTime,
     });
     this.setState((prevState) => {
       const { reactions } = prevState;
@@ -168,6 +180,7 @@ class Chatroom extends React.Component {
                 addReaction={this.addReaction}
                 messageText={message}
                 messageSender={this.state.messageSender[index]}
+                createdAtTime={this.state.messageCreatedAt[index]}
               />
             </li>
           ))}
@@ -191,6 +204,7 @@ const ReactionButton = ({
   addReaction,
   messageText,
   messageSender,
+  createdAtTime,
 }) => {
   const [clickedReactions, setClickedReactions] = useState([]);
 
@@ -201,7 +215,14 @@ const ReactionButton = ({
         prevClickedReactions.filter((r) => r !== reaction)
       );
       // Remove the reaction from the message's reactions list
-      addReaction(messageId, reaction, messageText, messageSender, false);
+      addReaction(
+        messageId,
+        reaction,
+        messageText,
+        messageSender,
+        false,
+        createdAtTime
+      );
     } else {
       // If the reaction is not clicked, add it to the clickedReactions state
       setClickedReactions((prevClickedReactions) => [
@@ -209,7 +230,14 @@ const ReactionButton = ({
         reaction,
       ]);
       // Add the reaction to the message's reactions list
-      addReaction(messageId, reaction, messageText, messageSender, true);
+      addReaction(
+        messageId,
+        reaction,
+        messageText,
+        messageSender,
+        true,
+        createdAtTime
+      );
     }
   };
 
