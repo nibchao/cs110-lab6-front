@@ -6,7 +6,7 @@
 }
 
 #chat-box {
-  height: 600px;
+  height: 900px;
   width: 700px;
   overflow-y: scroll;
   box-shadow: #42806c 0px 20px 30px -10px;
@@ -32,25 +32,32 @@ h1 {
 #text {
   border-radius: 10px;
   height: 30px;
+  width: 500px;
 }
 
 #send-button {
   margin-left: 10px;
   height: 30px;
-  color: white;
-  border-style: solid;
-  background-color: #1e8b69;
+  background-color: #00ACEE;
   border-radius: 10px;
 }
 
 #back-button {
-  margin-top: 20px;
-  width: auto;
-  height: 30px;
+  margin-top: 10px;
+  margin-left: 10px;
   color: white;
-  border-style: solid;
-  background-color: #1e8b69;
-  border-radius: 10px;
+  background-color: #00ACEE;
+  border-radius: 50px;
+}
+
+#send-button:hover {
+  color: black;
+  background-color: gold;
+}
+
+#back-button:hover {
+  color: black;
+  background-color: lightblue;
 }
 
 #message-timestamp {
@@ -78,10 +85,10 @@ h1 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e8b68;
+  background: paleturquoise;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #293833;
+  background: turquoise;
 }

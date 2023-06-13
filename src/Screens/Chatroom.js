@@ -105,7 +105,7 @@ class Chatroom extends React.Component {
 
   handleReceivedMessage = async (message) => {
     this.setState((prevState) => ({
-      messages: [...prevState.messages, message.text],
+      messages: [...prevState.messages, message.messageText],
       reactions: { ...prevState.reactions, [message.id]: [] },
     }));
     this.fetchMessageHistory();
@@ -160,7 +160,7 @@ class Chatroom extends React.Component {
 
     return (
       <div id="chat-room">
-        <Button id="back-button" onClick={this.back}>
+        <Button variant="filled" id="back-button" onClick={this.back}>
           Back To Rooms
         </Button>
         <h1>{`Room: ${this.props.roomID}`}</h1>
@@ -204,7 +204,7 @@ class Chatroom extends React.Component {
               value={this.state.text}
               onChange={this.handleTextChange}
             />
-            <Button id="send-button" onClick={this.sendMessage}>
+            <Button variant="filled" id="send-button" onClick={this.sendMessage}>
               Send
             </Button>
           </div>
