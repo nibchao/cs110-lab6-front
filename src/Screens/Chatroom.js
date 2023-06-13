@@ -173,7 +173,7 @@ class Chatroom extends React.Component {
                 style={{ paddingBottom: 20 }}
               >
                 <div id="sender-name">
-                  {this.state.messageSenderNames[index]}
+                  {"@"}{this.state.messageSenderNames[index]}
                 </div>
                 {/* {": "} */}
                 {message}{" "}

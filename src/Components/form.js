@@ -1,6 +1,11 @@
 import react from "react";
 import { Button, TextField } from "@mui/material";
 import "./form.css";
+import InputAdornment from '@mui/material/InputAdornment';
+import Person from '@mui/icons-material/Person';
+import Lock from '@mui/icons-material/Lock';
+import Email from '@mui/icons-material/Email';
+import Send from '@mui/icons-material/Send';
 
 class Form extends react.Component {
   constructor(props) {
@@ -36,13 +41,44 @@ class Form extends react.Component {
     return (
       <div>
         <div>
-          <Button variant="outlined" id="go-back-button" onClick={this.props.close}> Go Back </Button>
+          <Button
+            variant="outlined"
+            id="go-back-button"
+            onClick={this.props.close}
+          >
+            {" "}
+            Go Back{" "}
+          </Button>
           <h3> {this.props.type} </h3>
         </div>
 
         <form onSubmit={this.handleSubmit}>
           {this.state.fields.map((field, index) => {
-            if (field[1] === "Password") {
+            if (field[1] === "Username") {
+                return (
+                  <div key={"auth" + field[1]}>
+                    <TextField
+                      variant="filled"
+                      key={"auth" + field[1]}
+                      label={field[1]}
+                      onChange={(event) => this.handleChange(event, index)}
+                      id={field[1]}
+                      margin="normal"
+                      sx={{ width: "300px" }}
+                      color="success"
+                      required
+                      InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Person />
+                            </InputAdornment>
+                          ),
+                        }}
+                    />
+                  </div>
+                );
+              }
+            else if (field[1] === "Password") {
               return (
                 <div key={"auth" + field[1]}>
                   <TextField
@@ -53,12 +89,44 @@ class Form extends react.Component {
                     id={field[1]}
                     type={"Password"}
                     margin="normal"
-                    sx={{width: "300px"}}
+                    sx={{ width: "300px" }}
                     color="warning"
+                    required
+                    InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock />
+                          </InputAdornment>
+                        ),
+                      }}
                   />
                 </div>
               );
-            } else {
+            }
+            else if (field[1] === "Email") {
+                return (
+                  <div key={"auth" + field[1]}>
+                    <TextField
+                      variant="filled"
+                      key={"auth" + field[1]}
+                      label={field[1]}
+                      onChange={(event) => this.handleChange(event, index)}
+                      id={field[1]}
+                      margin="normal"
+                      sx={{ width: "300px" }}
+                      color="success"
+                      required
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Email />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+                );
+              }  else if (field[1] === "OTPToken") {
               return (
                 <div key={"auth" + field[1]}>
                   <TextField
@@ -68,8 +136,34 @@ class Form extends react.Component {
                     onChange={(event) => this.handleChange(event, index)}
                     id={field[1]}
                     margin="normal"
-                    sx={{width: "300px"}}
+                    sx={{ width: "300px" }}
                     color="success"
+                    helperText="Click generate and paste the login code here!"
+                    required
+                    InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Send />
+                          </InputAdornment>
+                        ),
+                      }}
+                  />
+                </div>
+              );
+            } 
+              else {
+              return (
+                <div key={"auth" + field[1]}>
+                  <TextField
+                    variant="filled"
+                    key={"auth" + field[1]}
+                    label={field[1]}
+                    onChange={(event) => this.handleChange(event, index)}
+                    id={field[1]}
+                    margin="normal"
+                    sx={{ width: "300px" }}
+                    color="success"
+                    required
                   />
                 </div>
               );
