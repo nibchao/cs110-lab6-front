@@ -10,6 +10,7 @@ class Auth extends react.Component {
       showForm: false,
       selectedForm: undefined,
       generatedOTPToken: Date.now(),
+      isButtonDisabled: false,
     };
   }
 
@@ -57,7 +58,12 @@ class Auth extends react.Component {
     });
   };
 
-  otpToken = () => {
+  otpToken = (event) => {
+    event.preventDefault();
+    this.setState({
+        isButtonDisabled: true
+    });
+    setTimeout(() => this.setState({ isButtonDisabled: false }), 10000);
     // COMMENTED OUT TO MAKE LOGGING IN LESS ANNOYING
     // fetch(this.props.server_url + "/api/auth/otptoken", {
     //   method: "POST",
@@ -92,7 +98,7 @@ class Auth extends react.Component {
               key={this.state.selectedForm}
               generatedOTP={this.state.generatedOTPToken}
             />
-            <Button variant="outlined" onClick={this.otpToken} id="generate-otp-button">
+            <Button variant="outlined" onClick={this.otpToken} id="generate-otp-button" disabled={this.state.isButtonDisabled}>
               Generate OTP Token to Login
             </Button>
           </div>
