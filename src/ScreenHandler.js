@@ -39,7 +39,7 @@ class ScreenHandler extends react.Component {
   };
 
   render() {
-    let display = "loading...";
+    let display = "Loading...";
     if (this.state.screen === "auth") {
       display = (
         <Auth server_url={server_url} changeScreen={this.changeScreen} />

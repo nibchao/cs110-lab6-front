@@ -41,7 +41,7 @@ class Form extends react.Component{
 
                 <form onSubmit={this.handleSubmit}>
                     {this.state.fields.map((field, index) => {
-                        if (field[1] === "password")
+                        if (field[1] === "Password")
                         {
                             return(
                                 <div key={"auth"+field[1]}>
@@ -51,7 +51,7 @@ class Form extends react.Component{
                                         label={field[1]} 
                                         onChange={(event) => this.handleChange(event, index)}
                                         id={field[1]}
-                                        type={"password"}
+                                        type={"Password"}
                                     />
                                 </div>
                             );
