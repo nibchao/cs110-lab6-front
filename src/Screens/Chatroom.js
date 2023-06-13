@@ -18,7 +18,9 @@ class Chatroom extends React.Component {
       text: "",
       reactions: {},
       messageSender: [],
+      messageSenderNames: [],
       reactionMessages: [],
+      timestampSender: [],
     };
   }
 
@@ -53,16 +55,36 @@ class Chatroom extends React.Component {
         const messageArray = [];
         const senderArray = [];
         const reactionArray = [];
+        const createdTimestampArray = [];
         for (let cnt = 0; cnt < data.length; cnt++) {
           messageArray.push(data[cnt].message.text);
           reactionArray.push(data[cnt].reactions);
           senderArray.push(data[cnt].sender);
+          let UTCTimestamp = data[cnt].createdAt;
+          let localTimestamp = new Date(UTCTimestamp);
+          let shortenedTimestamp = localTimestamp.toString().replace(/GMT.*/g, "");
+          createdTimestampArray.push(shortenedTimestamp);
         }
+
+        fetch(this.props.server_url + "/api/rooms/getUsernames", {
+          method: "POST",
+          mode: "cors",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userIDArray: senderArray }),
+        }).then((res) => {
+          res.json().then((data) => {
+              this.setState({messageSenderNames: data});
+            });
+          });
 
         this.setState({
           messages: messageArray,
           messageSender: senderArray,
           reactionMessages: reactionArray,
+          timestampSender: createdTimestampArray,
         });
       });
     });
@@ -127,7 +149,8 @@ class Chatroom extends React.Component {
         <ul>
           {messages.map((message, index) => (
             <li key={"messageKey" + index} style={{ paddingBottom: 20 }}>
-              {message}{" "}
+              <div>{this.state.timestampSender[index]}</div>
+              {this.state.messageSenderNames[index]}{": "}{message}{" "}
               <div>{"[ Reactions: " +
                 (this.state.reactionMessages[index]
                   ? this.state.reactionMessages[index]
