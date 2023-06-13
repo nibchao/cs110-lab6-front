@@ -56,6 +56,31 @@ class Auth extends react.Component {
     });
   };
 
+  tempLogin = (data) => {
+    fetch(this.props.server_url + "/api/auth/tempLogin", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      res.json().then((data) => {
+        if (data.status === true)
+        {
+          this.props.changeScreen("editprofile");
+          // window.location.reload();
+        }
+        else
+        {
+          alert(data.message);
+        }
+      });
+    });
+  };
+
   otpToken = () => {
     // COMMENTED OUT TO MAKE LOGGING IN LESS ANNOYING
     // alert(
@@ -107,6 +132,17 @@ class Auth extends react.Component {
             key={this.state.selectedForm}
           />
         );
+      } else if (this.state.selectedForm === "editprofile") {
+        fields = ["email", "username", "password"];
+        display = (
+          <Form
+            fields={fields}
+            close={this.closeForm}
+            type="Edit Profile Login Form"
+            submit={this.tempLogin}
+            key={this.state.selectedForm}
+          />
+        );
       }
     } else {
       display = (
@@ -124,6 +160,13 @@ class Auth extends react.Component {
             }
           >
             Register
+          </Button>
+          <Button
+            onClick={() =>
+              this.setState({ showForm: true, selectedForm: "editprofile" })
+            }
+          >
+            Edit Profile
           </Button>
         </div>
       );
