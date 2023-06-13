@@ -15,27 +15,70 @@ class EditProfile extends React.Component {
       transports: ["websocket"],
     });
     this.state = {
-      showForm: false,
+      newUsername: "",
     };
   }
 
-  componentDidMount() {
+  componentDidMount() {}
 
-  }
+  editProfileSubmit = (data) => {
+    fetch(this.props.server_url + "/api/auth/newUsername", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => {
+        res.json().then((data) => {
+          alert(data.message);
+          return (
+            <div>
+              <Auth server_url={this.props.server_url} changeScreen="auth" />
+            </div>
+          );
+        });
+      })
+      .then(() => window.location.reload());
+  };
 
-  editProfileSubmit = () => {
-    console.log('edit profile submitted');
-  }
+  handleTextChange = (e) => {
+    this.setState({ text: e.target.value });
+  };
 
-  closeForm = () => {
-    this.setState({ showForm: false });
+  logout = () => {
+    fetch(this.props.server_url + "/api/auth/logout", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(() => {
+        return (
+          <div>
+            <Auth server_url={this.props.server_url} changeScreen="auth" />
+          </div>
+        );
+      })
+      .then(() => window.location.reload());
   };
 
   render() {
-    let fields=['username', 'new username'];
+    let fields = ["Current Username", "NewUsername"];
+    let display = (
+      <Form
+        fields={fields}
+        close={this.logout}
+        type="Edit Profile Form"
+        submit={this.editProfileSubmit}
+        onChange={this.handleTextChange}
+        key={"editprofile"}
+      />
+    );
     return (
       <div>
-        <h1>Hi</h1>
         <Button
           variant="contained"
           onClick={() => {
@@ -61,13 +104,8 @@ class EditProfile extends React.Component {
         >
           Logout
         </Button>
-        
-        <Form fields={fields}
-            close={this.closeForm}
-            type="Edit Profile Form"
-            submit={this.editProfileSubmit}
-            key={'editprofile'}></Form>
         <h1>Edit Profile</h1>
+        {display}
       </div>
     );
   }
